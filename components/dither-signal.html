@@ -28,6 +28,8 @@ body{background:var(--black);color:var(--white);font-family:var(--font-display)}
 .hero .k b{color:var(--white);font-weight:500}
 .hero p{color:var(--grey);max-width:44ch;font-size:1.0625rem;line-height:1.6;text-align:right}
 @media(max-width:768px){.hero{padding:0 20px}.hero .copy{left:20px;right:20px;flex-direction:column;align-items:flex-start}.hero p{text-align:left}}
+/* short viewports (card previews, landscape phones): the carved headline alone */
+@media(max-height:520px){.hero p{display:none}}
 
 /* ============ GUIDE ============ */
 .guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding:32px 48px 96px}
