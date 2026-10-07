@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component N · Alpha Curve</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.replay{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--line);color:var(--ivory);padding:8px 16px;cursor:pointer;margin-top:40px;transition:border-color var(--dur-fast) var(--ease)}
+.replay:hover{border-color:var(--ivory)}
+.replay:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+/* page scaffolding so the scrub fires */
+.intro{max-width:960px;margin:0 auto 48px}
+.intro h1{font-family:var(--font-display);font-size:2.5rem;font-weight:400;line-height:1.1;color:var(--ivory)}
+.intro p{margin-top:16px;color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spacer{min-height:28vh}
+.stage{max-width:960px;margin:0 auto}
+
+/* the figure */
+.alpha-fig{
+  border-radius:1.5rem;
+  border:1px solid var(--line);
+  background:rgba(20,17,11,.4);
+  padding:2.5rem;
+  overflow:hidden;
+}
+.alpha-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.alpha-head figcaption,
+.alpha-head .pv{
+  font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;
+  letter-spacing:.3em;color:var(--faint);
+}
+.alpha-head .pv{white-space:nowrap}
+.alpha-head .pv b{font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:normal;color:var(--gold-soft)}
+.alpha-fig svg{width:100%;height:auto;display:block}
+.alpha-foot{margin-top:1rem;font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.3em;color:var(--faint)}
+</style>
+</head>
+<body>
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT N</b> / ALPHA CURVE · SCROLL-SCRUBBED PATH DRAW + COUNTER</div>
+
+<header class="intro">
+  <h1>The one allowed data moment.</h1>
+  <p>Scroll to draw the curve; the counter climbs with it. Illustrative only.</p>
+</header>
+
+<div class="spacer" aria-hidden="true"></div>
+
+<main class="stage">
+  <figure class="alpha-fig">
+    <div class="alpha-head">
+      <figcaption>Cumulative alpha · illustrative</figcaption>
+      <p class="pv">Portfolio value: <b id="alpha-value">$100,000</b></p>
+    </div>
+    <svg viewBox="0 0 1200 280" role="img" aria-label="An upward-trending cumulative alpha curve, illustrative">
+      <defs>
+        <linearGradient id="hf-alpha-stroke" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#c9a24b" stop-opacity="0.25"></stop>
+          <stop offset="100%" stop-color="#e7cd8c"></stop>
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="252" x2="1200" y2="252" stroke="#2a2519" stroke-width="1"></line>
+      <path id="alpha-path" d="M0,250 C150,250 180,212 260,206 C340,200 360,172 460,152 C560,132 580,150 660,122 C760,84 800,112 900,82 C1000,56 1050,42 1200,22" fill="none" stroke="url(#hf-alpha-stroke)" stroke-width="2.5" stroke-linecap="round"></path>
+    </svg>
+    <p class="alpha-foot">Acct: hallowed finance trader</p>
+  </figure>
+</main>
+
+<div class="spacer" aria-hidden="true"></div>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / ALPHA CURVE</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>The single permitted data moment on the page: a bespoke gold-on-dark alpha curve that draws itself in on scroll, with a HUD-style portfolio counter that counts up in sync. The path draw (stroke-dashoffset) and the counter tween ride the same ScrollTrigger scrub, so the number tracks the line's travel exactly.</p>
+      <h3>When to use</h3>
+      <p>Once per page, as a single credibility beat. Never more than one. If you already have a chart, sparkline, or count-up anywhere else, this is not the place for a second.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Path</dt><dd>strokeDasharray = totalLength; scrub top 88% → bottom 62%</dd>
+        <dt>Counter</dt><dd>100,000 → 1,000,000, formatUsd on update</dd>
+        <dt>Reduced</dt><dd>offset 0, counter at final value, no ScrollTrigger</dd>
+        <dt>A11y</dt><dd>role img, labelled illustrative</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>No real data behind it. No second chart on the same page. No count-up without the draw, no draw without the count-up. No replay button; scroll-scrubbed scenes re-trigger on scroll.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;!-- Requires GSAP: https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js --&gt;
+
+&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.intro{max-width:960px;margin:0 auto 48px}
+.intro h1{font-family:var(--font-display);font-size:2.5rem;font-weight:400;line-height:1.1;color:var(--ivory)}
+.intro p{margin-top:16px;color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spacer{min-height:28vh}
+.stage{max-width:960px;margin:0 auto}
+.alpha-fig{
+  border-radius:1.5rem;
+  border:1px solid var(--line);
+  background:rgba(20,17,11,.4);
+  padding:2.5rem;
+  overflow:hidden;
+}
+.alpha-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.alpha-head figcaption,
+.alpha-head .pv{
+  font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;
+  letter-spacing:.3em;color:var(--faint);
+}
+.alpha-head .pv{white-space:nowrap}
+.alpha-head .pv b{font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:normal;color:var(--gold-soft)}
+.alpha-fig svg{width:100%;height:auto;display:block}
+.alpha-foot{margin-top:1rem;font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.3em;color:var(--faint)}
+&lt;/style&gt;
+
+&lt;header class="intro"&gt;
+  &lt;h1&gt;The one allowed data moment.&lt;/h1&gt;
+  &lt;p&gt;Scroll to draw the curve; the counter climbs with it. Illustrative only.&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;div class="spacer" aria-hidden="true"&gt;&lt;/div&gt;
+
+&lt;main class="stage"&gt;
+  &lt;figure class="alpha-fig"&gt;
+    &lt;div class="alpha-head"&gt;
+      &lt;figcaption&gt;Cumulative alpha · illustrative&lt;/figcaption&gt;
+      &lt;p class="pv"&gt;Portfolio value: &lt;b id="alpha-value"&gt;$100,000&lt;/b&gt;&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;svg viewBox="0 0 1200 280" role="img" aria-label="An upward-trending cumulative alpha curve, illustrative"&gt;
+      &lt;defs&gt;
+        &lt;linearGradient id="hf-alpha-stroke" x1="0" y1="0" x2="1" y2="0"&gt;
+          &lt;stop offset="0%" stop-color="#c9a24b" stop-opacity="0.25"&gt;&lt;/stop&gt;
+          &lt;stop offset="100%" stop-color="#e7cd8c"&gt;&lt;/stop&gt;
+        &lt;/linearGradient&gt;
+      &lt;/defs&gt;
+      &lt;line x1="0" y1="252" x2="1200" y2="252" stroke="#2a2519" stroke-width="1"&gt;&lt;/line&gt;
+      &lt;path id="alpha-path" d="M0,250 C150,250 180,212 260,206 C340,200 360,172 460,152 C560,132 580,150 660,122 C760,84 800,112 900,82 C1000,56 1050,42 1200,22" fill="none" stroke="url(#hf-alpha-stroke)" stroke-width="2.5" stroke-linecap="round"&gt;&lt;/path&gt;
+    &lt;/svg&gt;
+    &lt;p class="alpha-foot"&gt;Acct: hallowed finance trader&lt;/p&gt;
+  &lt;/figure&gt;
+&lt;/main&gt;
+
+&lt;div class="spacer" aria-hidden="true"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+gsap.registerPlugin(ScrollTrigger);
+const START_VALUE = 100000, END_VALUE = 1000000;
+const formatUsd = v =&gt; `$${Math.round(v).toLocaleString('en-US')}`;
+const path = document.getElementById('alpha-path');
+const valueEl = document.getElementById('alpha-value');
+const len = path.getTotalLength();
+path.style.strokeDasharray = len;
+
+gsap.matchMedia()
+  .add('(prefers-reduced-motion: no-preference)', () =&gt; {
+    path.style.strokeDashoffset = len;
+    valueEl.textContent = formatUsd(START_VALUE);
+    const counter = { v: START_VALUE };
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: { trigger: path, start: 'top 88%', end: 'bottom 62%', scrub: true },
+    });
+    tl.to(path, { strokeDashoffset: 0 }, 0);
+    tl.to(counter, {
+      v: END_VALUE,
+      onUpdate: () =&gt; { valueEl.textContent = formatUsd(counter.v); },
+    }, 0);
+    return () =&gt; tl.scrollTrigger &amp;&amp; tl.scrollTrigger.kill();
+  })
+  .add('(prefers-reduced-motion: reduce)', () =&gt; {
+    path.style.strokeDashoffset = 0;
+    valueEl.textContent = formatUsd(END_VALUE);
+  });
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const START_VALUE = 100000, END_VALUE = 1000000;
+const formatUsd = v => `$${Math.round(v).toLocaleString('en-US')}`;
+const path = document.getElementById('alpha-path');
+const valueEl = document.getElementById('alpha-value');
+const len = path.getTotalLength();
+path.style.strokeDasharray = len;
+
+gsap.matchMedia()
+  .add('(prefers-reduced-motion: no-preference)', () => {
+    path.style.strokeDashoffset = len;
+    valueEl.textContent = formatUsd(START_VALUE);
+    const counter = { v: START_VALUE };
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: { trigger: path, start: 'top 88%', end: 'bottom 62%', scrub: true },
+    });
+    tl.to(path, { strokeDashoffset: 0 }, 0);
+    tl.to(counter, {
+      v: END_VALUE,
+      onUpdate: () => { valueEl.textContent = formatUsd(counter.v); },
+    }, 0);
+    return () => tl.scrollTrigger && tl.scrollTrigger.kill();
+  })
+  .add('(prefers-reduced-motion: reduce)', () => {
+    path.style.strokeDashoffset = 0;
+    valueEl.textContent = formatUsd(END_VALUE);
+  });
+</script>
+</body>
+</html>

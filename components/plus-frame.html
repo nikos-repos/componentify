@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component A · Plus-Marked Frame</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<style>
+:root{
+  --black:#050505;--surface:#0C0C0C;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --dur-fast:150ms;--ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--white);font-weight:500}
+.replay{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--line);color:var(--white);padding:8px 16px;cursor:pointer;display:block;width:fit-content;margin:40px auto 0;transition:border-color var(--dur-fast) var(--ease-out)}
+.replay:hover{border-color:var(--white)}
+.replay:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ============ COMPONENT: PLUS-MARKED FRAME ============ */
+.plus-frame{position:relative;max-width:640px;margin:0 auto;padding:40px}
+.pf-line{position:absolute;display:block;background:var(--line)}
+.pf-top   {top:0;   left:0; width:100%;height:1px;transform-origin:left center}
+.pf-bottom{bottom:0;left:0; width:100%;height:1px;transform-origin:left center}
+.pf-left  {top:0;   left:0; width:1px; height:100%;transform-origin:center top}
+.pf-right {top:0;   right:0;width:1px; height:100%;transform-origin:center top}
+.pf-plus{position:absolute;font-family:var(--font-mono);font-size:12px;line-height:1;color:var(--white);background:var(--black);padding:1px 2px;z-index:2}
+.pf-tl{top:-7px;left:-5px}
+.pf-tr{top:-7px;right:-5px}
+.pf-bl{bottom:-7px;left:-5px}
+.pf-br{bottom:-7px;right:-5px}
+.pf-content .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:16px}
+.pf-content h2{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:500;letter-spacing:-.01em;line-height:1.25}
+.pf-content p{color:var(--grey);font-size:.875rem;margin-top:16px;max-width:48ch}
+
+/* ============ GUIDE ============ */
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--white);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--grey);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--grey);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--grey);white-space:pre;border-radius:.75rem!important}
+.usage b{color:var(--white);font-weight:500}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT A</b> / PLUS-MARKED FRAME · ORDERED BUILD-IN</div>
+
+<div class="plus-frame" id="frame">
+  <i class="pf-line pf-top"></i>
+  <i class="pf-line pf-bottom"></i>
+  <i class="pf-line pf-left"></i>
+  <i class="pf-line pf-right"></i>
+  <span class="pf-plus pf-tl">+</span>
+  <span class="pf-plus pf-tr">+</span>
+  <span class="pf-plus pf-bl">+</span>
+  <span class="pf-plus pf-br">+</span>
+  <div class="pf-content">
+    <span class="k">P.01 / FEATURED</span>
+    <h2>Any featured content, framed like a drawing.</h2>
+    <p>The frame assembles in reading order: left markers, horizontal lines, right markers, vertical lines. Content settles last.</p>
+  </div>
+</div>
+
+<button class="replay" id="replay">↺ Replay</button>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / PLUS-MARKED FRAME</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A framed container marked with a plus at each corner. The plus sits on a black patch that masks the hairlines crossing behind it, so the frame reads as four edges meeting four markers. It assembles in reading order on intro.</p>
+      <h3>When to use</h3>
+      <p>Calling out a single featured item, a pull quote, or a key spec. One per section, two on a page at most. The frame is the hierarchy, so do not nest frames or stack them in a grid.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--line edges, --white plus on --black patch</dd>
+        <dt>Motion</dt><dd>left plus, h-lines, right plus, v-lines, content</dd>
+        <dt>A11y</dt><dd>markers decorative, reduced-motion renders full frame</dd>
+        <dt>Layout</dt><dd>max 640px, 40px padding, plus offset -7/-5px</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Do not round the plus patch, it must stay opaque black to mask the lines. Do not animate lines with width, use scaleX and scaleY. Keep content last in the build order.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;!-- Requires GSAP: https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js --&gt;
+
+&lt;style&gt;
+:root{
+  --black:#050505;--surface:#0C0C0C;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --dur-fast:150ms;--ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display);min-height:100vh;padding:64px 48px}
+.plus-frame{position:relative;max-width:640px;margin:0 auto;padding:40px}
+.pf-line{position:absolute;display:block;background:var(--line)}
+.pf-top   {top:0;   left:0; width:100%;height:1px;transform-origin:left center}
+.pf-bottom{bottom:0;left:0; width:100%;height:1px;transform-origin:left center}
+.pf-left  {top:0;   left:0; width:1px; height:100%;transform-origin:center top}
+.pf-right {top:0;   right:0;width:1px; height:100%;transform-origin:center top}
+.pf-plus{position:absolute;font-family:var(--font-mono);font-size:12px;line-height:1;color:var(--white);background:var(--black);padding:1px 2px;z-index:2}
+.pf-tl{top:-7px;left:-5px}
+.pf-tr{top:-7px;right:-5px}
+.pf-bl{bottom:-7px;left:-5px}
+.pf-br{bottom:-7px;right:-5px}
+.pf-content .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:16px}
+.pf-content h2{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:500;letter-spacing:-.01em;line-height:1.25}
+.pf-content p{color:var(--grey);font-size:.875rem;margin-top:16px;max-width:48ch}
+&lt;/style&gt;
+
+&lt;div class="plus-frame" id="frame"&gt;
+  &lt;i class="pf-line pf-top"&gt;&lt;/i&gt;
+  &lt;i class="pf-line pf-bottom"&gt;&lt;/i&gt;
+  &lt;i class="pf-line pf-left"&gt;&lt;/i&gt;
+  &lt;i class="pf-line pf-right"&gt;&lt;/i&gt;
+  &lt;span class="pf-plus pf-tl"&gt;+&lt;/span&gt;
+  &lt;span class="pf-plus pf-tr"&gt;+&lt;/span&gt;
+  &lt;span class="pf-plus pf-bl"&gt;+&lt;/span&gt;
+  &lt;span class="pf-plus pf-br"&gt;+&lt;/span&gt;
+  &lt;div class="pf-content"&gt;
+    &lt;span class="k"&gt;P.01 / FEATURED&lt;/span&gt;
+    &lt;h2&gt;Any featured content, framed like a drawing.&lt;/h2&gt;
+    &lt;p&gt;The frame assembles in reading order: left markers, horizontal lines, right markers, vertical lines. Content settles last.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+/* Ordered schema:
+   1. left "+" (tl, bl) rotate in clockwise
+   2. horizontal hairlines expand left → right
+   3. right "+" (tr, br) revealed as the lines reach them
+   4. vertical hairlines expand top → bottom            */
+function plusFrameIntro(frame){
+  const q = gsap.utils.selector(frame);
+  return gsap.timeline({defaults:{ease:"power3.out"}})
+    .from(q(".pf-tl, .pf-bl"), {autoAlpha:0, rotation:-120, duration:0.5, stagger:0.08})
+    .fromTo(q(".pf-top, .pf-bottom"), {scaleX:0}, {scaleX:1, duration:0.7, ease:"power2.inOut"}, "-=0.15")
+    .from(q(".pf-tr, .pf-br"), {autoAlpha:0, duration:0.3}, "-=0.12")
+    .fromTo(q(".pf-left, .pf-right"), {scaleY:0}, {scaleY:1, duration:0.6, ease:"power2.inOut"}, "-=0.08")
+    .from(q(".pf-content"), {autoAlpha:0, y:10, duration:0.5}, "-=0.25");
+}
+
+let tl = null;
+const mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, (ctx) =&gt; {
+  if (ctx.conditions.full) tl = plusFrameIntro(document.getElementById("frame"));
+  /* reduce: frame stays fully rendered, no motion */
+});
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+/* Ordered schema:
+   1. left "+" (tl, bl) rotate in clockwise
+   2. horizontal hairlines expand left → right
+   3. right "+" (tr, br) revealed as the lines reach them
+   4. vertical hairlines expand top → bottom            */
+function plusFrameIntro(frame){
+  const q = gsap.utils.selector(frame);
+  return gsap.timeline({defaults:{ease:"power3.out"}})
+    .from(q(".pf-tl, .pf-bl"), {autoAlpha:0, rotation:-120, duration:0.5, stagger:0.08})
+    .fromTo(q(".pf-top, .pf-bottom"), {scaleX:0}, {scaleX:1, duration:0.7, ease:"power2.inOut"}, "-=0.15")
+    .from(q(".pf-tr, .pf-br"), {autoAlpha:0, duration:0.3}, "-=0.12")
+    .fromTo(q(".pf-left, .pf-right"), {scaleY:0}, {scaleY:1, duration:0.6, ease:"power2.inOut"}, "-=0.08")
+    .from(q(".pf-content"), {autoAlpha:0, y:10, duration:0.5}, "-=0.25");
+}
+
+let tl = null;
+const mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, (ctx) => {
+  if (ctx.conditions.full) tl = plusFrameIntro(document.getElementById("frame"));
+  /* reduce: frame stays fully rendered, no motion */
+});
+document.getElementById("replay").addEventListener("click", () => tl && tl.restart());
+</script>
+</body>
+</html>

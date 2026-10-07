@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component U · Seamless Marquee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+@keyframes hf-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.animate-marquee{animation:hf-marquee var(--marquee-duration,38s) linear infinite}
+.marquee-paused:hover .animate-marquee{animation-play-state:paused}
+
+/* ============ COMPONENT: SEAMLESS MARQUEE ============ */
+.mq{position:relative;overflow:hidden;max-width:1200px;margin:0 auto;-webkit-mask-image:linear-gradient(to right,transparent,black 7%,black 93%,transparent);mask-image:linear-gradient(to right,transparent,black 7%,black 93%,transparent);padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mq-track{display:flex;width:max-content;will-change:transform}
+.mq ul{display:flex;align-items:center;gap:56px;padding-right:56px;list-style:none;flex-shrink:0}
+.mq li{display:flex;align-items:center;gap:12px;color:var(--muted);flex-shrink:0}
+.mq .dot{width:6px;height:6px;border-radius:9999px;background:rgba(201,162,75,.5);flex-shrink:0}
+.mq .name{font-family:var(--font-title);font-size:1.5rem;font-weight:400;letter-spacing:.01em;white-space:nowrap}
+@media(min-width:768px){.mq .name{font-size:2rem}}
+
+@media(prefers-reduced-motion:reduce){.animate-marquee{animation:none}}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT U</b> / SEAMLESS MARQUEE · LOOP + HOVER PAUSE</div>
+
+<div class="mq marquee-paused">
+  <div class="mq-track animate-marquee" id="track" style="--marquee-duration:42s"></div>
+</div>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / SEAMLESS MARQUEE</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A seamless infinite marquee. The track is rendered twice and translated negative fifty percent, so the loop point is invisible. It pauses on hover and the duplicate track is hidden from assistive tech. Edge masking fades the first and last seven percent into transparency so entries and exits read as dissolves, not cuts.</p>
+      <h3>When to use</h3>
+      <p>A row of partner or integration names. Each item pairs a mark with its name; in the source the logos are forced to a single tone via a brightness and invert filter so any source colour resolves to the theme.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--muted names, --gold dot, --line rules</dd>
+        <dt>Motion</dt><dd>translateX 0 to -50%, 42s linear infinite</dd>
+        <dt>A11y</dt><dd>duplicate track aria-hidden; paused on hover</dd>
+        <dt>Layout</dt><dd>track rendered twice; edge mask 7%</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Never render the track once; the negative-fifty-percent loop needs two copies. Do not ease the animation; linear is what makes it seamless. Do not drop the edge mask or the loop point shows a hard name boundary.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+@keyframes hf-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.animate-marquee{animation:hf-marquee var(--marquee-duration,38s) linear infinite}
+.marquee-paused:hover .animate-marquee{animation-play-state:paused}
+.mq{position:relative;overflow:hidden;max-width:1200px;margin:0 auto;-webkit-mask-image:linear-gradient(to right,transparent,black 7%,black 93%,transparent);mask-image:linear-gradient(to right,transparent,black 7%,black 93%,transparent);padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mq-track{display:flex;width:max-content;will-change:transform}
+.mq ul{display:flex;align-items:center;gap:56px;padding-right:56px;list-style:none;flex-shrink:0}
+.mq li{display:flex;align-items:center;gap:12px;color:var(--muted);flex-shrink:0}
+.mq .dot{width:6px;height:6px;border-radius:9999px;background:rgba(201,162,75,.5);flex-shrink:0}
+.mq .name{font-family:var(--font-title);font-size:1.5rem;font-weight:400;letter-spacing:.01em;white-space:nowrap}
+@media(min-width:768px){.mq .name{font-size:2rem}}
+@media(prefers-reduced-motion:reduce){.animate-marquee{animation:none}}
+&lt;/style&gt;
+
+&lt;div class="mq marquee-paused"&gt;
+  &lt;div class="mq-track animate-marquee" id="track" style="--marquee-duration:42s"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+// Partner names; source pairs each with a logo forced to a single tone.
+// Logos live in the site's /public/logos and are not bundled here, so each
+// name is set with a small gold dot in front, which still demonstrates the loop.
+var PARTNERS = ["NinjaTrader","Quantower","HyperLiquid","Databento","Nado","Interactive Brokers","MetaTrader 5","Darwinex"];
+function buildList(hidden){
+  var ul = document.createElement("ul");
+  if(hidden) ul.setAttribute("aria-hidden","true");
+  PARTNERS.forEach(function(name){
+    var li = document.createElement("li");
+    var dot = document.createElement("span"); dot.className = "dot"; dot.setAttribute("aria-hidden","true");
+    var n = document.createElement("span"); n.className = "name"; n.textContent = name;
+    li.appendChild(dot); li.appendChild(n);
+    ul.appendChild(li);
+  });
+  return ul;
+}
+var track = document.getElementById("track");
+track.appendChild(buildList(false));
+track.appendChild(buildList(true));
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+// Partner names; source pairs each with a logo forced to a single tone.
+// Logos live in the site's /public/logos and are not bundled here, so each
+// name is set with a small gold dot in front, which still demonstrates the loop.
+var PARTNERS = ["NinjaTrader","Quantower","HyperLiquid","Databento","Nado","Interactive Brokers","MetaTrader 5","Darwinex"];
+function buildList(hidden){
+  var ul = document.createElement("ul");
+  if(hidden) ul.setAttribute("aria-hidden","true");
+  PARTNERS.forEach(function(name){
+    var li = document.createElement("li");
+    var dot = document.createElement("span"); dot.className = "dot"; dot.setAttribute("aria-hidden","true");
+    var n = document.createElement("span"); n.className = "name"; n.textContent = name;
+    li.appendChild(dot); li.appendChild(n);
+    ul.appendChild(li);
+  });
+  return ul;
+}
+var track = document.getElementById("track");
+track.appendChild(buildList(false));
+track.appendChild(buildList(true));
+</script>
+</body>
+</html>

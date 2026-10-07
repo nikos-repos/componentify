@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component X · Scroll-Scrubbed Creed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px;padding:0 48px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+@keyframes hf-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.animate-rise{opacity:0;animation:hf-rise 1.15s var(--ease) forwards}
+
+/* ============ COMPONENT: SCROLL-SCRUBBED CREED ============ */
+.creed-wrap{max-width:80rem;margin:0 auto;padding:0 48px}
+.creed-grid{display:grid;gap:48px}
+@media(min-width:768px){.creed-grid{grid-template-columns:5fr 7fr;gap:64px}}
+.creed-rail{}
+.creed-rail .sticky{position:relative}
+@media(min-width:768px){.creed-rail .sticky{position:sticky;top:6rem}}
+.creed-kick{font-family:var(--font-mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.42em;color:var(--gold)}
+.creed-title{margin-top:20px;font-family:var(--font-display);font-weight:300;font-size:clamp(3rem,8vw,5.5rem);line-height:.92;color:var(--ivory)}
+.creed-body{max-width:36rem}
+.creed-body p{font-family:var(--font-title);font-size:clamp(1.4rem,2.6vw,2rem);line-height:1.5;color:var(--ivory);margin-bottom:36px}
+.creed-body p:last-child{margin-bottom:0}
+.creed-body .word{display:inline-block}
+.spacer{height:22vh}
+
+@media(prefers-reduced-motion:reduce){.animate-rise{opacity:1;animation:none}.creed-body .word{opacity:1 !important}}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT X</b> / SCROLL-SCRUBBED CREED · WORD-BY-WORD SCRUB</div>
+
+<div class="spacer"></div>
+
+<div class="creed-wrap">
+  <div id="pin">
+    <div class="creed-grid">
+      <div class="creed-rail">
+        <div class="sticky">
+          <p class="creed-kick animate-rise">The Creed</p>
+          <h1 class="creed-title animate-rise">The Doctrine</h1>
+        </div>
+      </div>
+      <div class="creed-body" id="words">
+        <p data-line>Noise, sold as information.</p>
+        <p data-line>We return the instruments to the individual.</p>
+        <p data-line>Research without permission. Backtest without limits. Deploy without intermediaries.</p>
+        <p data-line>This is not a brokerage. It is an order.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="spacer"></div>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / SCROLL-SCRUBBED CREED</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>On desktop the whole block pins to the viewport and the creed writes itself in word by word, opacity scrubbed from fifteen percent to one over a real scroll distance, then releases cleanly to the closing call. On mobile the same scrub runs unpinned against the natural page scroll.</p>
+      <h3>When to use</h3>
+      <p>A manifesto or statement of intent, once. Give it real scroll length so each word lands; never auto-play it. Recompute ScrollTrigger once the display font has settled.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--ivory words, --gold kicker, --faint floor</dd>
+        <dt>Motion</dt><dd>opacity .15 to 1, staggered, scrub .5</dd>
+        <dt>A11y</dt><dd>every word opaque under reduced-motion</dd>
+        <dt>Layout</dt><dd>5/7 grid, pinned desktop, scrub mobile</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>No fade on the rail heading that blocks reading. Do not shorten the scroll distance or the scrub feels jumpy. Do not leave words invisible for reduced-motion users.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;!-- Requires GSAP: https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js --&gt;
+
+&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh}
+@keyframes hf-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.animate-rise{opacity:0;animation:hf-rise 1.15s var(--ease) forwards}
+.creed-wrap{max-width:80rem;margin:0 auto;padding:0 48px}
+.creed-grid{display:grid;gap:48px}
+@media(min-width:768px){.creed-grid{grid-template-columns:5fr 7fr;gap:64px}}
+.creed-rail{}
+.creed-rail .sticky{position:relative}
+@media(min-width:768px){.creed-rail .sticky{position:sticky;top:6rem}}
+.creed-kick{font-family:var(--font-mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.42em;color:var(--gold)}
+.creed-title{margin-top:20px;font-family:var(--font-display);font-weight:300;font-size:clamp(3rem,8vw,5.5rem);line-height:.92;color:var(--ivory)}
+.creed-body{max-width:36rem}
+.creed-body p{font-family:var(--font-title);font-size:clamp(1.4rem,2.6vw,2rem);line-height:1.5;color:var(--ivory);margin-bottom:36px}
+.creed-body p:last-child{margin-bottom:0}
+.creed-body .word{display:inline-block}
+.spacer{height:22vh}
+@media(prefers-reduced-motion:reduce){.animate-rise{opacity:1;animation:none}.creed-body .word{opacity:1 !important}}
+&lt;/style&gt;
+
+&lt;div class="spacer"&gt;&lt;/div&gt;
+
+&lt;div class="creed-wrap"&gt;
+  &lt;div id="pin"&gt;
+    &lt;div class="creed-grid"&gt;
+      &lt;div class="creed-rail"&gt;
+        &lt;div class="sticky"&gt;
+          &lt;p class="creed-kick animate-rise"&gt;The Creed&lt;/p&gt;
+          &lt;h1 class="creed-title animate-rise"&gt;The Doctrine&lt;/h1&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class="creed-body" id="words"&gt;
+        &lt;p data-line&gt;Noise, sold as information.&lt;/p&gt;
+        &lt;p data-line&gt;We return the instruments to the individual.&lt;/p&gt;
+        &lt;p data-line&gt;Research without permission. Backtest without limits. Deploy without intermediaries.&lt;/p&gt;
+        &lt;p data-line&gt;This is not a brokerage. It is an order.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="spacer"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+gsap.registerPlugin(ScrollTrigger);
+
+// Split each line into word spans.
+var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var lines = document.querySelectorAll("#words [data-line]");
+lines.forEach(function(line){
+  var text = line.textContent.trim();
+  var words = text.split(/\s+/);
+  line.innerHTML = words.map(function(w){
+    return '&lt;span class="word" data-word&gt;' + w + '&lt;/span&gt;';
+  }).join(" ");
+});
+
+if(reduced){
+  document.querySelectorAll(".word").forEach(function(w){ w.style.opacity = 1; });
+} else {
+  var words = document.querySelectorAll("[data-word]");
+  gsap.set(words, {opacity:.15});
+  var mm = gsap.matchMedia();
+  mm.add("(min-width: 768px)", function(){
+    gsap.timeline({
+      scrollTrigger:{trigger:"#pin", start:"top top", end:"+=" + (words.length * 28), pin:true, scrub:.5, anticipatePin:1}
+    }).to(words, {opacity:1, ease:"none", stagger:.5});
+  });
+  mm.add("(max-width: 767.98px)", function(){
+    gsap.to(words, {opacity:1, ease:"none", stagger:.4, scrollTrigger:{trigger:"#words", start:"top 85%", end:"bottom 55%", scrub:true}});
+  });
+  if(document.fonts &amp;&amp; document.fonts.ready){ document.fonts.ready.then(function(){ ScrollTrigger.refresh(); }); }
+}
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Split each line into word spans.
+var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var lines = document.querySelectorAll("#words [data-line]");
+lines.forEach(function(line){
+  var text = line.textContent.trim();
+  var words = text.split(/\s+/);
+  line.innerHTML = words.map(function(w){
+    return '<span class="word" data-word>' + w + '</span>';
+  }).join(" ");
+});
+
+if(reduced){
+  document.querySelectorAll(".word").forEach(function(w){ w.style.opacity = 1; });
+} else {
+  var words = document.querySelectorAll("[data-word]");
+  gsap.set(words, {opacity:.15});
+  var mm = gsap.matchMedia();
+  mm.add("(min-width: 768px)", function(){
+    gsap.timeline({
+      scrollTrigger:{trigger:"#pin", start:"top top", end:"+=" + (words.length * 28), pin:true, scrub:.5, anticipatePin:1}
+    }).to(words, {opacity:1, ease:"none", stagger:.5});
+  });
+  mm.add("(max-width: 767.98px)", function(){
+    gsap.to(words, {opacity:1, ease:"none", stagger:.4, scrollTrigger:{trigger:"#words", start:"top 85%", end:"bottom 55%", scrub:true}});
+  });
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ ScrollTrigger.refresh(); }); }
+}
+</script>
+</body>
+</html>

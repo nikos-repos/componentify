@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component J · Contact Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<style>
+:root{
+  --black:#050505;--surface:#0C0C0C;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --dur-fast:150ms;--dur-base:300ms;--ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--white);font-weight:500}
+
+/* ============ COMPONENT: CONTACT FORM ============ */
+.cf{max-width:560px;margin:0 auto}
+.cf-field{margin-bottom:36px}
+.cf-label{display:block;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);margin-bottom:12px}
+/* underline input: no box, just a hairline that takes the accent on focus */
+.cf-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--white);font-family:var(--font-display);font-size:1.0625rem;padding:8px 0;transition:border-color var(--dur-base) var(--ease-out)}
+.cf-input:focus{outline:none;border-bottom-color:var(--accent)}
+.cf-input::placeholder{color:var(--grey-dim)}
+.cf-textarea{resize:vertical;min-height:96px;line-height:1.5}
+.cf-helper{display:block;font-family:var(--font-mono);font-size:11px;color:var(--grey);margin-top:10px;letter-spacing:.04em}
+
+/* submit reuses the directional-fill button pattern */
+.cf-submit{
+  position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;
+  padding:16px 32px;border:1px solid var(--line);background:transparent;cursor:pointer;
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--white);
+  transition:transform var(--dur-fast) var(--ease-out);
+}
+.cf-submit:active{transform:translateY(1px)}
+.cf-submit:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dir-fill{position:absolute;inset:0;z-index:1;background:var(--white);pointer-events:none}
+.dir-label-wrap{position:relative;z-index:2;display:inline-block}
+.dir-label{display:inline-block;white-space:nowrap}
+.dir-label--on{position:absolute;inset:0;color:var(--black);opacity:0}
+
+.cf-status{margin-top:28px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);min-height:1.2em}
+.cf-status.is-ok{color:var(--white)}
+
+/* ============ GUIDE ============ */
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--white);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--grey);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--grey);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--grey);white-space:pre;border-radius:.75rem!important}
+.usage b{color:var(--white);font-weight:500}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT J</b> / CONTACT FORM · UNDERLINE FIELDS + WIPE SUBMIT</div>
+
+<form class="cf" id="cf" novalidate>
+  <div class="cf-field">
+    <label class="cf-label" for="name">Name</label>
+    <input class="cf-input" id="name" name="name" type="text" autocomplete="name" required>
+    <span class="cf-helper">How I should address you.</span>
+  </div>
+  <div class="cf-field">
+    <label class="cf-label" for="email">Email</label>
+    <input class="cf-input" id="email" name="email" type="email" autocomplete="email" required>
+    <span class="cf-helper">Used only to reply, never passed on.</span>
+  </div>
+  <div class="cf-field">
+    <label class="cf-label" for="msg">Project</label>
+    <textarea class="cf-input cf-textarea" id="msg" name="msg" required></textarea>
+    <span class="cf-helper">A sentence or two is enough to start.</span>
+  </div>
+  <button class="cf-submit" id="submit" type="submit">
+    <span class="dir-fill"></span>
+    <span class="dir-label-wrap">
+      <span class="dir-label dir-label--off">Send</span>
+      <span class="dir-label dir-label--on">Send</span>
+    </span>
+  </button>
+  <p class="cf-status" id="status" role="status" aria-live="polite"></p>
+</form>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / CONTACT FORM</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>Label-above inputs with a hairline underline, no boxes. The focused field's underline takes the accent, the single color, and the submit reuses the directional-fill button so the form's action matches the rest of the site. Status lands inline, not as a toast.</p>
+      <h3>When to use</h3>
+      <p>The contact section. Wire the submit handler to your endpoint and replace the simulated status with the real response. Keep three fields, name, email, project, anything more belongs in a follow-up email.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--line underline, --accent focus, --grey labels</dd>
+        <dt>Contrast</dt><dd>labels 7.7:1, helper 7.7:1, accent focus 11.3:1</dd>
+        <dt>A11y</dt><dd>label-for, autocomplete, aria-live status, focus-visible</dd>
+        <dt>Motion</dt><dd>underline 300ms, submit wipe reuses dir-button</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>No placeholder-as-label. No boxed inputs, the underline is the field. One accent underline at a time, only the focused field.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;!-- Requires GSAP: https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js --&gt;
+
+&lt;style&gt;
+:root{
+  --black:#050505;--surface:#0C0C0C;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --dur-fast:150ms;--dur-base:300ms;--ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display);min-height:100vh;padding:64px 48px}
+.cf{max-width:560px;margin:0 auto}
+.cf-field{margin-bottom:36px}
+.cf-label{display:block;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);margin-bottom:12px}
+.cf-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--white);font-family:var(--font-display);font-size:1.0625rem;padding:8px 0;transition:border-color var(--dur-base) var(--ease-out)}
+.cf-input:focus{outline:none;border-bottom-color:var(--accent)}
+.cf-input::placeholder{color:var(--grey-dim)}
+.cf-textarea{resize:vertical;min-height:96px;line-height:1.5}
+.cf-helper{display:block;font-family:var(--font-mono);font-size:11px;color:var(--grey);margin-top:10px;letter-spacing:.04em}
+.cf-submit{
+  position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;
+  padding:16px 32px;border:1px solid var(--line);background:transparent;cursor:pointer;
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--white);
+  transition:transform var(--dur-fast) var(--ease-out);
+}
+.cf-submit:active{transform:translateY(1px)}
+.cf-submit:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dir-fill{position:absolute;inset:0;z-index:1;background:var(--white);pointer-events:none}
+.dir-label-wrap{position:relative;z-index:2;display:inline-block}
+.dir-label{display:inline-block;white-space:nowrap}
+.dir-label--on{position:absolute;inset:0;color:var(--black);opacity:0}
+.cf-status{margin-top:28px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);min-height:1.2em}
+.cf-status.is-ok{color:var(--white)}
+&lt;/style&gt;
+
+&lt;form class="cf" id="cf" novalidate&gt;
+  &lt;div class="cf-field"&gt;
+    &lt;label class="cf-label" for="name"&gt;Name&lt;/label&gt;
+    &lt;input class="cf-input" id="name" name="name" type="text" autocomplete="name" required&gt;
+    &lt;span class="cf-helper"&gt;How I should address you.&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="cf-field"&gt;
+    &lt;label class="cf-label" for="email"&gt;Email&lt;/label&gt;
+    &lt;input class="cf-input" id="email" name="email" type="email" autocomplete="email" required&gt;
+    &lt;span class="cf-helper"&gt;Used only to reply, never passed on.&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="cf-field"&gt;
+    &lt;label class="cf-label" for="msg"&gt;Project&lt;/label&gt;
+    &lt;textarea class="cf-input cf-textarea" id="msg" name="msg" required&gt;&lt;/textarea&gt;
+    &lt;span class="cf-helper"&gt;A sentence or two is enough to start.&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;button class="cf-submit" id="submit" type="submit"&gt;
+    &lt;span class="dir-fill"&gt;&lt;/span&gt;
+    &lt;span class="dir-label-wrap"&gt;
+      &lt;span class="dir-label dir-label--off"&gt;Send&lt;/span&gt;
+      &lt;span class="dir-label dir-label--on"&gt;Send&lt;/span&gt;
+    &lt;/span&gt;
+  &lt;/button&gt;
+  &lt;p class="cf-status" id="status" role="status" aria-live="polite"&gt;&lt;/p&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+const submit = document.getElementById("submit");
+const fill = submit.querySelector(".dir-fill");
+const ORIGINS = {left:"0% 50%", right:"100% 50%", top:"50% 0%", bottom:"50% 100%"};
+const AXIS = {left:"scaleX", right:"scaleX", top:"scaleY", bottom:"scaleY"};
+const reduce = () =&gt; matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function edge(e, el){
+  const r = el.getBoundingClientRect();
+  const d = {left:(e.clientX-r.left)/r.width, right:(r.right-e.clientX)/r.width,
+             top:(e.clientY-r.top)/r.height, bottom:(r.bottom-e.clientY)/r.height};
+  let k="left", m=2;
+  for (const key in d) if (d[key] &lt; m){ m=d[key]; k=key; }
+  return k;
+}
+function enter(e){
+  const dur = reduce() ? 0 : 0.4;
+  if (e){
+    const ed = edge(e, submit), ax = AXIS[ed], other = ax==="scaleX"?"scaleY":"scaleX";
+    gsap.set(fill, {transformOrigin:ORIGINS[ed], [other]:1, [ax]:0});
+    gsap.to(fill, {[ax]:1, duration:dur, ease:"power3.out"});
+  } else {
+    gsap.set(fill, {transformOrigin:"50% 50%"});
+    gsap.to(fill, {scaleX:1, scaleY:1, duration:dur, ease:"power2.out"});
+  }
+  const ld = reduce() ? 0 : 0.2;
+  gsap.to(submit.querySelector(".dir-label--off"), {opacity:0, duration:ld});
+  gsap.to(submit.querySelector(".dir-label--on"), {opacity:1, duration:ld, delay:reduce()?0:0.12});
+}
+function leave(e){
+  const dur = reduce() ? 0 : 0.3;
+  if (e){
+    const ed = edge(e, submit), ax = AXIS[ed];
+    gsap.set(fill, {transformOrigin:ORIGINS[ed]});
+    gsap.to(fill, {[ax]:0, duration:dur, ease:"power3.in"});
+  } else {
+    gsap.to(fill, {scaleX:0, scaleY:0, duration:dur, ease:"power3.in"});
+  }
+  const ld = reduce() ? 0 : 0.15;
+  gsap.to(submit.querySelector(".dir-label--on"), {opacity:0, duration:ld});
+  gsap.to(submit.querySelector(".dir-label--off"), {opacity:1, duration:ld, delay:reduce()?0:0.1});
+}
+
+gsap.set(fill, {scaleX:0, scaleY:0, opacity:1, transformOrigin:"50% 50%"});
+submit.addEventListener("mouseenter", e =&gt; enter(e));
+submit.addEventListener("mouseleave", e =&gt; leave(e));
+submit.addEventListener("focusin",  () =&gt; enter(null));
+submit.addEventListener("focusout", () =&gt; leave(null));
+
+const form = document.getElementById("cf");
+const status = document.getElementById("status");
+form.addEventListener("submit", (e) =&gt; {
+  e.preventDefault();
+  if (!form.checkValidity()){ form.reportValidity(); return; }
+  // ponytail: no backend in a component demo, status fakes success
+  status.textContent = "Sent. I will reply within two days.";
+  status.classList.add("is-ok");
+  form.reset();
+});
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+const submit = document.getElementById("submit");
+const fill = submit.querySelector(".dir-fill");
+const ORIGINS = {left:"0% 50%", right:"100% 50%", top:"50% 0%", bottom:"50% 100%"};
+const AXIS = {left:"scaleX", right:"scaleX", top:"scaleY", bottom:"scaleY"};
+const reduce = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function edge(e, el){
+  const r = el.getBoundingClientRect();
+  const d = {left:(e.clientX-r.left)/r.width, right:(r.right-e.clientX)/r.width,
+             top:(e.clientY-r.top)/r.height, bottom:(r.bottom-e.clientY)/r.height};
+  let k="left", m=2;
+  for (const key in d) if (d[key] < m){ m=d[key]; k=key; }
+  return k;
+}
+function enter(e){
+  const dur = reduce() ? 0 : 0.4;
+  if (e){
+    const ed = edge(e, submit), ax = AXIS[ed], other = ax==="scaleX"?"scaleY":"scaleX";
+    gsap.set(fill, {transformOrigin:ORIGINS[ed], [other]:1, [ax]:0});
+    gsap.to(fill, {[ax]:1, duration:dur, ease:"power3.out"});
+  } else {
+    gsap.set(fill, {transformOrigin:"50% 50%"});
+    gsap.to(fill, {scaleX:1, scaleY:1, duration:dur, ease:"power2.out"});
+  }
+  const ld = reduce() ? 0 : 0.2;
+  gsap.to(submit.querySelector(".dir-label--off"), {opacity:0, duration:ld});
+  gsap.to(submit.querySelector(".dir-label--on"), {opacity:1, duration:ld, delay:reduce()?0:0.12});
+}
+function leave(e){
+  const dur = reduce() ? 0 : 0.3;
+  if (e){
+    const ed = edge(e, submit), ax = AXIS[ed];
+    gsap.set(fill, {transformOrigin:ORIGINS[ed]});
+    gsap.to(fill, {[ax]:0, duration:dur, ease:"power3.in"});
+  } else {
+    gsap.to(fill, {scaleX:0, scaleY:0, duration:dur, ease:"power3.in"});
+  }
+  const ld = reduce() ? 0 : 0.15;
+  gsap.to(submit.querySelector(".dir-label--on"), {opacity:0, duration:ld});
+  gsap.to(submit.querySelector(".dir-label--off"), {opacity:1, duration:ld, delay:reduce()?0:0.1});
+}
+
+gsap.set(fill, {scaleX:0, scaleY:0, opacity:1, transformOrigin:"50% 50%"});
+submit.addEventListener("mouseenter", e => enter(e));
+submit.addEventListener("mouseleave", e => leave(e));
+submit.addEventListener("focusin",  () => enter(null));
+submit.addEventListener("focusout", () => leave(null));
+
+const form = document.getElementById("cf");
+const status = document.getElementById("status");
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!form.checkValidity()){ form.reportValidity(); return; }
+  // ponytail: no backend in a component demo, status fakes success
+  status.textContent = "Sent. I will reply within two days.";
+  status.classList.add("is-ok");
+  form.reset();
+});
+</script>
+</body>
+</html>

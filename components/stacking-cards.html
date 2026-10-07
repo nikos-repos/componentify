@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component L · Stacking Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+/* text-shimmer (from index.css, token names adapted) */
+@keyframes hf-shimmer{0%{background-position:175% 0}100%{background-position:-75% 0}}
+.text-shimmer{background-image:linear-gradient(100deg,var(--muted) 0%,var(--muted) 42%,var(--gold-soft) 48%,#f7eed1 50%,var(--gold-soft) 52%,var(--muted) 58%,var(--muted) 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:hf-shimmer 13s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.text-shimmer{animation:none;-webkit-text-fill-color:var(--muted);color:var(--muted)}}
+
+/* Component L · Stacking Cards */
+.intro{max-width:960px;margin-bottom:72px}
+.intro h2{font-family:var(--font-title);font-size:clamp(2.25rem,5.5vw,3.75rem);line-height:1.04;color:var(--ivory);font-weight:400;letter-spacing:.01em}
+.intro h2 em{font-style:normal;color:var(--gold-soft)}
+.intro p{margin-top:20px;max-width:36rem;font-weight:300;line-height:1.7;font-size:1.0625rem}
+.stack{max-width:960px;margin:0 auto;display:flex;flex-direction:column}
+.card-wrap{position:sticky;top:6.5rem}
+.card{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:220px;border:1px solid var(--line);background:var(--surface);border-radius:1.5rem;padding:32px 24px;overflow:hidden;box-shadow:0 -1px 0 0 rgba(201,162,75,.12),0 40px 90px -50px rgba(0,0,0,.85)}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,75,.4),transparent)}
+.card-inner{display:flex;flex-direction:column;gap:20px}
+.numeral{font-family:var(--font-title);font-size:4.5rem;line-height:1;color:var(--gold-soft);font-weight:400}
+.card-body{max-width:36rem}
+.card-body h3{font-family:var(--font-title);font-size:2rem;color:var(--ivory);font-weight:400;line-height:1.05}
+.card-body p{margin-top:12px;font-family:var(--font-body);font-size:1rem;font-weight:300;line-height:1.7;color:var(--muted)}
+@media(min-width:768px){
+  .card{min-height:260px;padding:48px 40px}
+  .card-inner{flex-direction:row;align-items:center;gap:56px}
+  .numeral{font-size:7rem}
+  .card-body h3{font-size:3rem}
+  .card-body p{font-size:1.0625rem}
+}
+</style>
+</head>
+<body>
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT L</b> / STACKING CARDS · STICKY LOCK + FADE</div>
+
+<header class="intro">
+  <h2>Five movements, one <em>relentless</em> loop.</h2>
+  <p class="text-shimmer">Research, build, validate, deploy, compound.</p>
+</header>
+
+<main class="stack" id="stack">
+  <div class="card-wrap" style="top:calc(6.5rem + 0rem)">
+    <article class="card">
+      <div class="card-inner">
+        <span class="numeral">I</span>
+        <div class="card-body">
+          <h3>Research</h3>
+          <p>Build a thesis from evidence.</p>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="card-wrap" style="top:calc(6.5rem + 1.5rem)">
+    <article class="card">
+      <div class="card-inner">
+        <span class="numeral">II</span>
+        <div class="card-body">
+          <h3>Build</h3>
+          <p>Code the strategy.</p>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="card-wrap" style="top:calc(6.5rem + 3rem)">
+    <article class="card">
+      <div class="card-inner">
+        <span class="numeral">III</span>
+        <div class="card-body">
+          <h3>Validate</h3>
+          <p>Backtest on real data.</p>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="card-wrap" style="top:calc(6.5rem + 4.5rem)">
+    <article class="card">
+      <div class="card-inner">
+        <span class="numeral">IV</span>
+        <div class="card-body">
+          <h3>Deploy</h3>
+          <p>Send it live.</p>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="card-wrap" style="top:calc(6.5rem + 6rem)">
+    <article class="card">
+      <div class="card-inner">
+        <span class="numeral">V</span>
+        <div class="card-body">
+          <h3>Compound</h3>
+          <p>Iterate and accrue.</p>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / STACKING CARDS</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>Sticky cards lock over each other as the next one rises. The buried card eases down in scale and opacity so a thin peek of each top edge (the gold hairline) remains visible beneath the card above. Scroll-scrubbed, so there is no replay button; scroll back up and the stack unspools.</p>
+      <h3>When to use</h3>
+      <p>A sequential process or loop with 3 to 6 steps, where each step carries equal weight and the order is the story. Good for methodologies, pipelines, and loops that compound on themselves.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>surface card, 1px line, gold hairline top, big-shadow</dd>
+        <dt>Sticky</dt><dd>top 6.5rem + i*1.5rem (i = 0-based)</dd>
+        <dt>Motion</dt><dd>scale 0.92 / opacity 0.45, scrub top 70% to 22%</dd>
+        <dt>Origin</dt><dd>transformOrigin center top</dd>
+        <dt>A11y</dt><dd>reduced-motion collapses to a plain static list</dd>
+        <dt>Radius</dt><dd>1.5rem (rounded-3xl)</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Don't use for non-sequential content where order is arbitrary. Don't exceed about 6 cards or the buried stack reads as visual noise and the scroll length becomes a chore.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;!-- Requires GSAP: https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js --&gt;
+
+&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+@keyframes hf-shimmer{0%{background-position:175% 0}100%{background-position:-75% 0}}
+.text-shimmer{background-image:linear-gradient(100deg,var(--muted) 0%,var(--muted) 42%,var(--gold-soft) 48%,#f7eed1 50%,var(--gold-soft) 52%,var(--muted) 58%,var(--muted) 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:hf-shimmer 13s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.text-shimmer{animation:none;-webkit-text-fill-color:var(--muted);color:var(--muted)}}
+.intro{max-width:960px;margin-bottom:72px}
+.intro h2{font-family:var(--font-title);font-size:clamp(2.25rem,5.5vw,3.75rem);line-height:1.04;color:var(--ivory);font-weight:400;letter-spacing:.01em}
+.intro h2 em{font-style:normal;color:var(--gold-soft)}
+.intro p{margin-top:20px;max-width:36rem;font-weight:300;line-height:1.7;font-size:1.0625rem}
+.stack{max-width:960px;margin:0 auto;display:flex;flex-direction:column}
+.card-wrap{position:sticky;top:6.5rem}
+.card{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:220px;border:1px solid var(--line);background:var(--surface);border-radius:1.5rem;padding:32px 24px;overflow:hidden;box-shadow:0 -1px 0 0 rgba(201,162,75,.12),0 40px 90px -50px rgba(0,0,0,.85)}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,75,.4),transparent)}
+.card-inner{display:flex;flex-direction:column;gap:20px}
+.numeral{font-family:var(--font-title);font-size:4.5rem;line-height:1;color:var(--gold-soft);font-weight:400}
+.card-body{max-width:36rem}
+.card-body h3{font-family:var(--font-title);font-size:2rem;color:var(--ivory);font-weight:400;line-height:1.05}
+.card-body p{margin-top:12px;font-family:var(--font-body);font-size:1rem;font-weight:300;line-height:1.7;color:var(--muted)}
+@media(min-width:768px){
+  .card{min-height:260px;padding:48px 40px}
+  .card-inner{flex-direction:row;align-items:center;gap:56px}
+  .numeral{font-size:7rem}
+  .card-body h3{font-size:3rem}
+  .card-body p{font-size:1.0625rem}
+}
+&lt;/style&gt;
+
+&lt;header class="intro"&gt;
+  &lt;h2&gt;Five movements, one &lt;em&gt;relentless&lt;/em&gt; loop.&lt;/h2&gt;
+  &lt;p class="text-shimmer"&gt;Research, build, validate, deploy, compound.&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;main class="stack" id="stack"&gt;
+  &lt;div class="card-wrap" style="top:calc(6.5rem + 0rem)"&gt;
+    &lt;article class="card"&gt;
+      &lt;div class="card-inner"&gt;
+        &lt;span class="numeral"&gt;I&lt;/span&gt;
+        &lt;div class="card-body"&gt;
+          &lt;h3&gt;Research&lt;/h3&gt;
+          &lt;p&gt;Build a thesis from evidence.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+  &lt;/div&gt;
+  &lt;div class="card-wrap" style="top:calc(6.5rem + 1.5rem)"&gt;
+    &lt;article class="card"&gt;
+      &lt;div class="card-inner"&gt;
+        &lt;span class="numeral"&gt;II&lt;/span&gt;
+        &lt;div class="card-body"&gt;
+          &lt;h3&gt;Build&lt;/h3&gt;
+          &lt;p&gt;Code the strategy.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+  &lt;/div&gt;
+  &lt;div class="card-wrap" style="top:calc(6.5rem + 3rem)"&gt;
+    &lt;article class="card"&gt;
+      &lt;div class="card-inner"&gt;
+        &lt;span class="numeral"&gt;III&lt;/span&gt;
+        &lt;div class="card-body"&gt;
+          &lt;h3&gt;Validate&lt;/h3&gt;
+          &lt;p&gt;Backtest on real data.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+  &lt;/div&gt;
+  &lt;div class="card-wrap" style="top:calc(6.5rem + 4.5rem)"&gt;
+    &lt;article class="card"&gt;
+      &lt;div class="card-inner"&gt;
+        &lt;span class="numeral"&gt;IV&lt;/span&gt;
+        &lt;div class="card-body"&gt;
+          &lt;h3&gt;Deploy&lt;/h3&gt;
+          &lt;p&gt;Send it live.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+  &lt;/div&gt;
+  &lt;div class="card-wrap" style="top:calc(6.5rem + 6rem)"&gt;
+    &lt;article class="card"&gt;
+      &lt;div class="card-inner"&gt;
+        &lt;span class="numeral"&gt;V&lt;/span&gt;
+        &lt;div class="card-body"&gt;
+          &lt;h3&gt;Compound&lt;/h3&gt;
+          &lt;p&gt;Iterate and accrue.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+  &lt;/div&gt;
+&lt;/main&gt;
+
+&lt;script&gt;
+gsap.registerPlugin(ScrollTrigger);
+const mm = gsap.matchMedia();
+mm.add("(prefers-reduced-motion: no-preference)", () =&gt; {
+  const wrappers = gsap.utils.toArray('.card-wrap');
+  const cards = gsap.utils.toArray('.card');
+  cards.forEach((card, i) =&gt; {
+    if (i &gt;= cards.length - 1) return;
+    gsap.to(card, {
+      scale: 0.92,
+      opacity: 0.45,
+      ease: 'none',
+      transformOrigin: 'center top',
+      scrollTrigger: {
+        trigger: wrappers[i + 1],
+        start: 'top 70%',
+        end: 'top 22%',
+        scrub: true,
+      },
+    });
+  });
+});
+mm.add("(prefers-reduced-motion: reduce)", () =&gt; {
+  // plain vertical list: no sticky, no scale/opacity tween
+  gsap.set('.card-wrap', { position: 'static', marginBottom: 24 });
+});
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const mm = gsap.matchMedia();
+mm.add("(prefers-reduced-motion: no-preference)", () => {
+  const wrappers = gsap.utils.toArray('.card-wrap');
+  const cards = gsap.utils.toArray('.card');
+  cards.forEach((card, i) => {
+    if (i >= cards.length - 1) return;
+    gsap.to(card, {
+      scale: 0.92,
+      opacity: 0.45,
+      ease: 'none',
+      transformOrigin: 'center top',
+      scrollTrigger: {
+        trigger: wrappers[i + 1],
+        start: 'top 70%',
+        end: 'top 22%',
+        scrub: true,
+      },
+    });
+  });
+});
+mm.add("(prefers-reduced-motion: reduce)", () => {
+  // plain vertical list: no sticky, no scale/opacity tween
+  gsap.set('.card-wrap', { position: 'static', marginBottom: 24 });
+});
+</script>
+</body>
+</html>

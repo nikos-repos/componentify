@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component V · Access Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+/* ============ COMPONENT: ACCESS FORM ============ */
+.af{max-width:28rem;margin:0 auto;text-align:center}
+.af .kick{font-family:var(--font-mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.42em;color:var(--gold)}
+.af h2{margin-top:24px;font-family:var(--font-title);font-weight:400;font-size:clamp(2rem,5vw,3rem);line-height:1.04;color:var(--ivory)}
+.af h2 .g{color:var(--gold-soft)}
+.af .lede{margin:20px auto 0;max-width:34rem;color:var(--muted);font-size:1rem;font-weight:300;line-height:1.7}
+.af form{margin-top:48px;text-align:left;display:flex;flex-direction:column;gap:20px}
+.af .hp{position:absolute;left:-9999px;height:0;width:0;opacity:0}
+.af label{display:block;margin-bottom:8px;font-family:var(--font-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.2em;color:var(--faint)}
+.af input{width:100%;border-radius:.75rem;border:1px solid var(--line);background:rgba(20,17,11,.6);padding:12px 16px;color:var(--ivory);font-family:var(--font-body);font-size:.9375rem;transition:border-color var(--dur-base) var(--ease)}
+.af input::placeholder{color:rgba(90,84,70,.8)}
+.af input:focus{outline:none;border-color:rgba(201,162,75,.6)}
+.af input[aria-invalid="true"]{border-color:#d9805f}
+.af .err{margin-top:8px;font-size:.75rem;color:#d9805f}
+.af .submit{display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:9999px;border:0;background:var(--ivory);color:var(--bg);padding:14px 32px;font-family:var(--font-body);font-size:.875rem;font-weight:500;letter-spacing:.01em;cursor:pointer;box-shadow:0 0 80px -24px rgba(201,162,75,.5);transition:background-color var(--dur-base) var(--ease)}
+.af .submit:hover{background:var(--gold-soft)}
+.af .submit:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.af .submit:disabled{cursor:not-allowed;opacity:.6}
+.af .submit svg{transition:transform var(--dur-base) var(--ease)}
+.af .submit:hover svg{transform:translateX(2px)}
+.af .fine{margin-top:4px;text-align:center;font-size:.75rem;font-weight:300;color:var(--faint)}
+.af .note{color:#d9805f;font-size:.875rem}
+/* success */
+.af .ok{max-width:28rem;margin:0 auto;border-radius:1rem;border:1px solid rgba(201,162,75,.3);background:rgba(20,17,11,.6);padding:40px 32px;text-align:center}
+.af .ok .badge{display:flex;align-items:center;justify-content:center;height:2.5rem;width:2.5rem;margin:0 auto 16px;border-radius:9999px;border:1px solid rgba(201,162,75,.5)}
+.af .ok h3{font-family:var(--font-title);font-weight:400;font-size:1.5rem;color:var(--ivory)}
+.af .ok p{margin-top:8px;font-size:.875rem;font-weight:300;color:var(--muted)}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT V</b> / ACCESS FORM · VALIDATION + STATES</div>
+
+<div class="af" id="af">
+  <p class="kick">Invite Only</p>
+  <h2>Membership is by <span class="g">invitation</span>.</h2>
+  <p class="lede">Request a spot in the order. We will reach out to you soon.</p>
+
+  <form id="form" novalidate>
+    <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div>
+      <label for="hf-name">Full name</label>
+      <input id="hf-name" name="name" type="text" autocomplete="name" placeholder="Ada Lovelace">
+      <p class="err" id="hf-name-err" hidden></p>
+    </div>
+    <div>
+      <label for="hf-email">Email</label>
+      <input id="hf-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@firm.com">
+      <p class="err" id="hf-email-err" hidden></p>
+    </div>
+    <p class="note" id="hf-fail" hidden>Your request could not be sent. Please try again.</p>
+    <button class="submit" id="submit" type="submit">
+      <span id="submit-label">Request an Invitation</span>
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <p class="fine">Single opt-in. We will never share your details.</p>
+  </form>
+</div>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / ACCESS FORM</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A gated invitation form. Inline accessible errors validate on blur, the submit is disabled while a request is in flight, a hidden honeypot field catches bots, and a success state replaces the form once the request lands in the ledger.</p>
+      <h3>When to use</h3>
+      <p>The single conversion point. The hero and nav request-access affordances scroll here and focus the email field. This demo simulates the submit; the source posts through an access function that is a mock in dev and a serverless function in production.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--gold focus, --ivory submit, #d9805f error</dd>
+        <dt>Motion</dt><dd>border-color .4s; arrow nudge on hover</dd>
+        <dt>A11y</dt><dd>aria-invalid, aria-describedby, role alert/status</dd>
+        <dt>States</dt><dd>idle, submitting, error, success</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>No submit without disabled-while-loading. No browser-only validation; inline errors must be reachable by screen readers. Never remove the honeypot.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.af{max-width:28rem;margin:0 auto;text-align:center}
+.af .kick{font-family:var(--font-mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.42em;color:var(--gold)}
+.af h2{margin-top:24px;font-family:var(--font-title);font-weight:400;font-size:clamp(2rem,5vw,3rem);line-height:1.04;color:var(--ivory)}
+.af h2 .g{color:var(--gold-soft)}
+.af .lede{margin:20px auto 0;max-width:34rem;color:var(--muted);font-size:1rem;font-weight:300;line-height:1.7}
+.af form{margin-top:48px;text-align:left;display:flex;flex-direction:column;gap:20px}
+.af .hp{position:absolute;left:-9999px;height:0;width:0;opacity:0}
+.af label{display:block;margin-bottom:8px;font-family:var(--font-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.2em;color:var(--faint)}
+.af input{width:100%;border-radius:.75rem;border:1px solid var(--line);background:rgba(20,17,11,.6);padding:12px 16px;color:var(--ivory);font-family:var(--font-body);font-size:.9375rem;transition:border-color var(--dur-base) var(--ease)}
+.af input::placeholder{color:rgba(90,84,70,.8)}
+.af input:focus{outline:none;border-color:rgba(201,162,75,.6)}
+.af input[aria-invalid="true"]{border-color:#d9805f}
+.af .err{margin-top:8px;font-size:.75rem;color:#d9805f}
+.af .submit{display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:9999px;border:0;background:var(--ivory);color:var(--bg);padding:14px 32px;font-family:var(--font-body);font-size:.875rem;font-weight:500;letter-spacing:.01em;cursor:pointer;box-shadow:0 0 80px -24px rgba(201,162,75,.5);transition:background-color var(--dur-base) var(--ease)}
+.af .submit:hover{background:var(--gold-soft)}
+.af .submit:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.af .submit:disabled{cursor:not-allowed;opacity:.6}
+.af .submit svg{transition:transform var(--dur-base) var(--ease)}
+.af .submit:hover svg{transform:translateX(2px)}
+.af .fine{margin-top:4px;text-align:center;font-size:.75rem;font-weight:300;color:var(--faint)}
+.af .note{color:#d9805f;font-size:.875rem}
+.af .ok{max-width:28rem;margin:0 auto;border-radius:1rem;border:1px solid rgba(201,162,75,.3);background:rgba(20,17,11,.6);padding:40px 32px;text-align:center}
+.af .ok .badge{display:flex;align-items:center;justify-content:center;height:2.5rem;width:2.5rem;margin:0 auto 16px;border-radius:9999px;border:1px solid rgba(201,162,75,.5)}
+.af .ok h3{font-family:var(--font-title);font-weight:400;font-size:1.5rem;color:var(--ivory)}
+.af .ok p{margin-top:8px;font-size:.875rem;font-weight:300;color:var(--muted)}
+&lt;/style&gt;
+
+&lt;div class="af" id="af"&gt;
+  &lt;p class="kick"&gt;Invite Only&lt;/p&gt;
+  &lt;h2&gt;Membership is by &lt;span class="g"&gt;invitation&lt;/span&gt;.&lt;/h2&gt;
+  &lt;p class="lede"&gt;Request a spot in the order. We will reach out to you soon.&lt;/p&gt;
+
+  &lt;form id="form" novalidate&gt;
+    &lt;input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true"&gt;
+    &lt;div&gt;
+      &lt;label for="hf-name"&gt;Full name&lt;/label&gt;
+      &lt;input id="hf-name" name="name" type="text" autocomplete="name" placeholder="Ada Lovelace"&gt;
+      &lt;p class="err" id="hf-name-err" hidden&gt;&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;label for="hf-email"&gt;Email&lt;/label&gt;
+      &lt;input id="hf-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@firm.com"&gt;
+      &lt;p class="err" id="hf-email-err" hidden&gt;&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;p class="note" id="hf-fail" hidden&gt;Your request could not be sent. Please try again.&lt;/p&gt;
+    &lt;button class="submit" id="submit" type="submit"&gt;
+      &lt;span id="submit-label"&gt;Request an Invitation&lt;/span&gt;
+      &lt;svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"&gt;&lt;path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/&gt;&lt;/svg&gt;
+    &lt;/button&gt;
+    &lt;p class="fine"&gt;Single opt-in. We will never share your details.&lt;/p&gt;
+  &lt;/form&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+var form = document.getElementById("form");
+var nameI = document.getElementById("hf-name");
+var emailI = document.getElementById("hf-email");
+var submit = document.getElementById("submit");
+var label = document.getElementById("submit-label");
+
+function showErr(id, msg){
+  var el = document.getElementById(id);
+  if(msg){ el.textContent = msg; el.hidden = false; }
+  else el.hidden = true;
+}
+function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+function validateName(){
+  var ok = nameI.value.trim().length &gt; 0;
+  nameI.setAttribute("aria-invalid", ok ? "false" : "true");
+  showErr("hf-name-err", ok ? "" : "Your full name is required.");
+  return ok;
+}
+function validateEmail(){
+  var v = emailI.value.trim();
+  var ok = v.length &gt; 0 &amp;&amp; validEmail(v);
+  emailI.setAttribute("aria-invalid", ok ? "false" : "true");
+  showErr("hf-email-err", !v ? "An email is required." : (!validEmail(v) ? "Enter a valid email address." : ""));
+  return ok;
+}
+nameI.addEventListener("blur", validateName);
+emailI.addEventListener("blur", validateEmail);
+
+form.addEventListener("submit", function(e){
+  e.preventDefault();
+  // Honeypot: if filled, silently drop.
+  if(form.elements["company"].value) return;
+  document.getElementById("hf-fail").hidden = true;
+  var ok = validateName() &amp; validateEmail();
+  if(!ok) return;
+
+  submit.disabled = true;
+  label.textContent = "Sending…";
+  // Simulated submit; the source posts through submitAccess().
+  setTimeout(function(){
+    submit.disabled = false;
+    label.textContent = "Request an Invitation";
+    var af = document.getElementById("af");
+    af.innerHTML =
+      '&lt;div class="ok" role="status"&gt;' +
+        '&lt;div class="badge"&gt;&lt;svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"&gt;&lt;path d="M5 13l4 4L19 7" stroke="#e7cd8c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/&gt;&lt;/svg&gt;&lt;/div&gt;' +
+        '&lt;h3&gt;Your request has entered the ledger.&lt;/h3&gt;' +
+        '&lt;p&gt;A steward will reach out when a place opens.&lt;/p&gt;' +
+      '&lt;/div&gt;';
+  }, 900);
+});
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+var form = document.getElementById("form");
+var nameI = document.getElementById("hf-name");
+var emailI = document.getElementById("hf-email");
+var submit = document.getElementById("submit");
+var label = document.getElementById("submit-label");
+
+function showErr(id, msg){
+  var el = document.getElementById(id);
+  if(msg){ el.textContent = msg; el.hidden = false; }
+  else el.hidden = true;
+}
+function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+function validateName(){
+  var ok = nameI.value.trim().length > 0;
+  nameI.setAttribute("aria-invalid", ok ? "false" : "true");
+  showErr("hf-name-err", ok ? "" : "Your full name is required.");
+  return ok;
+}
+function validateEmail(){
+  var v = emailI.value.trim();
+  var ok = v.length > 0 && validEmail(v);
+  emailI.setAttribute("aria-invalid", ok ? "false" : "true");
+  showErr("hf-email-err", !v ? "An email is required." : (!validEmail(v) ? "Enter a valid email address." : ""));
+  return ok;
+}
+nameI.addEventListener("blur", validateName);
+emailI.addEventListener("blur", validateEmail);
+
+form.addEventListener("submit", function(e){
+  e.preventDefault();
+  // Honeypot: if filled, silently drop.
+  if(form.elements["company"].value) return;
+  document.getElementById("hf-fail").hidden = true;
+  var ok = validateName() & validateEmail();
+  if(!ok) return;
+
+  submit.disabled = true;
+  label.textContent = "Sending…";
+  // Simulated submit; the source posts through submitAccess().
+  setTimeout(function(){
+    submit.disabled = false;
+    label.textContent = "Request an Invitation";
+    var af = document.getElementById("af");
+    af.innerHTML =
+      '<div class="ok" role="status">' +
+        '<div class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="#e7cd8c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+        '<h3>Your request has entered the ledger.</h3>' +
+        '<p>A steward will reach out when a place opens.</p>' +
+      '</div>';
+  }, 900);
+});
+</script>
+</body>
+</html>

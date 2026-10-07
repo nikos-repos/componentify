@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component W · Ambient Layer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+/* Film grain: a fixed, faintly drifting noise field laid over the page. */
+@keyframes hf-grain{0%{transform:translate(0,0)}25%{transform:translate(-5%,4%)}50%{transform:translate(4%,-5%)}75%{transform:translate(-3%,-4%)}100%{transform:translate(5%,3%)}}
+.grain-layer{
+  position:fixed;inset:-55%;z-index:60;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:170px 170px;
+  animation:hf-grain 12s ease-in-out infinite;
+}
+
+/* ============ COMPONENT: SECTION ATMOSPHERE (the reusable chapter ambient layer) ============ */
+.atm{position:relative;width:100%;height:60svh;overflow:hidden;border:1px solid var(--line);border-radius:1.5rem;background:var(--bg);margin-bottom:32px}
+.atm .layer{position:absolute;inset:0;pointer-events:none}
+.atm .wash{background:radial-gradient(120% 90% at 50% 0%,rgba(20,17,11,.85) 0%,transparent 60%)}
+.atm .bloom{opacity:.6;mix-blend-mode:screen;background:radial-gradient(46% 38% at 50% 42%,rgba(201,162,75,.10),transparent 70%)}
+.atm .vignette{background:radial-gradient(120% 90% at 50% 100%,rgba(11,10,8,.9),transparent 55%)}
+.atm .fg{position:relative;z-index:10;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px}
+.atm .kick{font-family:var(--font-mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.42em;color:var(--gold)}
+.atm h2{margin-top:20px;font-family:var(--font-title);font-weight:400;font-size:clamp(1.75rem,4vw,2.75rem);line-height:1.04;color:var(--ivory)}
+
+.cap{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.2em;color:var(--faint);text-align:center;margin-bottom:8px}
+
+@media(prefers-reduced-motion:reduce){
+  .grain-layer{animation:none}
+}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<!-- Film grain over the whole page -->
+<div class="grain-layer" aria-hidden="true"></div>
+
+<div class="demo-label"><b>COMPONENT W</b> / AMBIENT LAYER · GRAIN + BLOOM</div>
+
+<p class="cap">Section atmosphere: radial wash + warm bloom (reusable per chapter)</p>
+<div class="atm">
+  <div class="layer wash" aria-hidden="true"></div>
+  <div class="layer bloom" aria-hidden="true"></div>
+  <div class="layer vignette" aria-hidden="true"></div>
+  <div class="fg">
+    <p class="kick">Chapter</p>
+    <h2>The same atmosphere the hero lives in</h2>
+  </div>
+</div>
+
+<p class="cap">Film grain: fixed, faintly drifting noise over the entire page</p>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / AMBIENT LAYER</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>Two reusable ambient pieces. The section atmosphere is a soft radial wash plus an optional warm gold bloom that sits behind a chapter, never intercepting pointer events, reusing the hero overlay recipe so new sections live inside the same air. The film grain is a fixed, faintly drifting noise field laid over the whole page for a cinematic texture.</p>
+      <h3>When to use</h3>
+      <p>Drop the atmosphere behind every chapter so the page reads as one continuous space. Lay the grain once, fixed, at the root. Both are decorative and aria-hidden.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--surface wash, --gold bloom, --bg vignette</dd>
+        <dt>Motion</dt><dd>grain 12s ease-in-out; bloom static</dd>
+        <dt>A11y</dt><dd>aria-hidden, pointer-events none</dd>
+        <dt>Layout</dt><dd>atmosphere absolute inset 0; grain fixed inset -55%</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Never let an ambient layer intercept pointer events. Keep grain opacity near five percent; any higher reads as static. Under reduced motion the grain stops drifting but stays; the bloom is static already.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+@keyframes hf-grain{0%{transform:translate(0,0)}25%{transform:translate(-5%,4%)}50%{transform:translate(4%,-5%)}75%{transform:translate(-3%,-4%)}100%{transform:translate(5%,3%)}}
+.grain-layer{
+  position:fixed;inset:-55%;z-index:60;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:170px 170px;
+  animation:hf-grain 12s ease-in-out infinite;
+}
+.atm{position:relative;width:100%;height:60svh;overflow:hidden;border:1px solid var(--line);border-radius:1.5rem;background:var(--bg);margin-bottom:32px}
+.atm .layer{position:absolute;inset:0;pointer-events:none}
+.atm .wash{background:radial-gradient(120% 90% at 50% 0%,rgba(20,17,11,.85) 0%,transparent 60%)}
+.atm .bloom{opacity:.6;mix-blend-mode:screen;background:radial-gradient(46% 38% at 50% 42%,rgba(201,162,75,.10),transparent 70%)}
+.atm .vignette{background:radial-gradient(120% 90% at 50% 100%,rgba(11,10,8,.9),transparent 55%)}
+.atm .fg{position:relative;z-index:10;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px}
+.atm .kick{font-family:var(--font-mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.42em;color:var(--gold)}
+.atm h2{margin-top:20px;font-family:var(--font-title);font-weight:400;font-size:clamp(1.75rem,4vw,2.75rem);line-height:1.04;color:var(--ivory)}
+.cap{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.2em;color:var(--faint);text-align:center;margin-bottom:8px}
+@media(prefers-reduced-motion:reduce){
+  .grain-layer{animation:none}
+}
+&lt;/style&gt;
+
+&lt;p class="cap"&gt;Section atmosphere: radial wash + warm bloom (reusable per chapter)&lt;/p&gt;
+&lt;div class="atm"&gt;
+  &lt;div class="layer wash" aria-hidden="true"&gt;&lt;/div&gt;
+  &lt;div class="layer bloom" aria-hidden="true"&gt;&lt;/div&gt;
+  &lt;div class="layer vignette" aria-hidden="true"&gt;&lt;/div&gt;
+  &lt;div class="fg"&gt;
+    &lt;p class="kick"&gt;Chapter&lt;/p&gt;
+    &lt;h2&gt;The same atmosphere the hero lives in&lt;/h2&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p class="cap"&gt;Film grain: fixed, faintly drifting noise over the entire page&lt;/p&gt;</code></pre>
+</section>
+
+</body>
+</html>

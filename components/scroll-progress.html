@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component T · Scroll Progress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+  --scroll-progress:0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px;padding:0 48px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+/* ============ COMPONENT: SCROLL PROGRESS ============ */
+.sp{position:fixed;inset-inline:0;top:0;z-index:70;height:2px;aria-hidden:true}
+.sp-fill{height:100%;width:100%;transform-origin:left center;transform:scaleX(var(--scroll-progress));background:linear-gradient(to right,rgba(201,162,75,.4),var(--gold),var(--gold-soft))}
+
+/* demo body */
+.sp-body{padding:64px 48px}
+.sp-body .wrap{max-width:80rem;margin:0 auto}
+.sp-body h2{font-family:var(--font-title);font-weight:400;font-size:clamp(2rem,5vw,3.5rem);line-height:1.04;color:var(--ivory)}
+.sp-body h2 .g{color:var(--gold-soft)}
+.sp-body p{color:var(--muted);font-size:1rem;font-weight:300;line-height:1.7;max-width:60ch;margin-top:20px}
+.sp-body section{padding:64px 0}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="sp" aria-hidden="true"><div class="sp-fill"></div></div>
+
+<div class="demo-label"><b>COMPONENT T</b> / SCROLL PROGRESS · GOLD TOP BAR</div>
+
+<div class="sp-body"><div class="wrap">
+  <h2>A 2px sacred-gold bar whose fill tracks the page <span class="g">scroll ratio</span>.</h2>
+  <p>Scroll this page. The top bar fills with your scroll ratio.</p>
+
+  <section><h2>Research</h2><p>Build a thesis from the quant library.</p></section>
+  <section><h2>Build</h2><p>Code the strategy with the agent.</p></section>
+  <section><h2>Validate</h2><p>Backtest on real historical data.</p></section>
+  <section><h2>Deploy</h2><p>Send it live and watch the edge accrue.</p></section>
+</div></div>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / SCROLL PROGRESS</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A two-pixel sacred-gold bar fixed at the very top of the viewport. Its fill width is a transform driven by a single custom property, --scroll-progress, which a passive scroll listener keeps at the page scroll ratio from zero to one.</p>
+      <h3>When to use</h3>
+      <p>Long-form pages with real scroll length, one per page. Skip it on short pages where the ratio never moves.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--gold fill, gradient .4 to gold-soft</dd>
+        <dt>Motion</dt><dd>none; direct scroll mapping, rAF throttle</dd>
+        <dt>A11y</dt><dd>aria-hidden, purely decorative</dd>
+        <dt>Layout</dt><dd>fixed, 2px, scaleX origin left</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Do not add a CSS transition to the fill; it must track scroll instantly or it lags. Do not smooth-scroll the page for the sake of the bar. Do not use on pages shorter than two viewports.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+  --scroll-progress:0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh}
+.sp{position:fixed;inset-inline:0;top:0;z-index:70;height:2px;aria-hidden:true}
+.sp-fill{height:100%;width:100%;transform-origin:left center;transform:scaleX(var(--scroll-progress));background:linear-gradient(to right,rgba(201,162,75,.4),var(--gold),var(--gold-soft))}
+.sp-body{padding:64px 48px}
+.sp-body .wrap{max-width:80rem;margin:0 auto}
+.sp-body h2{font-family:var(--font-title);font-weight:400;font-size:clamp(2rem,5vw,3.5rem);line-height:1.04;color:var(--ivory)}
+.sp-body h2 .g{color:var(--gold-soft)}
+.sp-body p{color:var(--muted);font-size:1rem;font-weight:300;line-height:1.7;max-width:60ch;margin-top:20px}
+.sp-body section{padding:64px 0}
+&lt;/style&gt;
+
+&lt;div class="sp-body"&gt;&lt;div class="wrap"&gt;
+  &lt;h2&gt;A 2px sacred-gold bar whose fill tracks the page &lt;span class="g"&gt;scroll ratio&lt;/span&gt;.&lt;/h2&gt;
+  &lt;p&gt;Scroll this page. The top bar fills with your scroll ratio.&lt;/p&gt;
+
+  &lt;section&gt;&lt;h2&gt;Research&lt;/h2&gt;&lt;p&gt;Build a thesis from the quant library.&lt;/p&gt;&lt;/section&gt;
+  &lt;section&gt;&lt;h2&gt;Build&lt;/h2&gt;&lt;p&gt;Code the strategy with the agent.&lt;/p&gt;&lt;/section&gt;
+  &lt;section&gt;&lt;h2&gt;Validate&lt;/h2&gt;&lt;p&gt;Backtest on real historical data.&lt;/p&gt;&lt;/section&gt;
+  &lt;section&gt;&lt;h2&gt;Deploy&lt;/h2&gt;&lt;p&gt;Send it live and watch the edge accrue.&lt;/p&gt;&lt;/section&gt;
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;script&gt;
+(function(){
+  var frame = 0;
+  function update(){
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var ratio = max &gt; 0 ? Math.min(1, doc.scrollTop / max) : 0;
+    doc.style.setProperty("--scroll-progress", ratio.toFixed(4));
+    frame = 0;
+  }
+  function onScroll(){ if(!frame) frame = requestAnimationFrame(update); }
+  update();
+  window.addEventListener("scroll", onScroll, {passive:true});
+  window.addEventListener("resize", onScroll, {passive:true});
+})();
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+(function(){
+  var frame = 0;
+  function update(){
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    var ratio = max > 0 ? Math.min(1, doc.scrollTop / max) : 0;
+    doc.style.setProperty("--scroll-progress", ratio.toFixed(4));
+    frame = 0;
+  }
+  function onScroll(){ if(!frame) frame = requestAnimationFrame(update); }
+  update();
+  window.addEventListener("scroll", onScroll, {passive:true});
+  window.addEventListener("resize", onScroll, {passive:true});
+})();
+</script>
+</body>
+</html>

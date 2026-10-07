@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accent Study · 10 Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#050505;--surface:#0C0C0C;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;
+  --accent:#FF3000;                                 /* the hot-swap token; everything below reads it */
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --dur-fast:150ms;--dur-base:300ms;--ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display);min-height:100vh;padding:64px 48px}
+
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:40px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--white);font-weight:500}
+
+/* ---------- header ---------- */
+.wrap{max-width:1200px}
+.head h1{font-size:clamp(2.25rem,6vw,4rem);font-weight:700;letter-spacing:-.03em;line-height:1.02}
+.head p{color:var(--grey);font-size:1.0625rem;line-height:1.6;max-width:60ch;margin-top:20px}
+.readout{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin-top:28px;font-family:var(--font-mono);font-size:13px}
+.readout-chip{width:22px;height:22px;background:var(--accent);border:1px solid var(--line)}
+.readout-name{color:var(--white);font-weight:500}
+.readout-hex{color:var(--grey)}
+.copy-btn{background:none;border:1px solid var(--line);color:var(--white);font-family:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;cursor:pointer;transition:border-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out)}
+.copy-btn:hover{border-color:var(--white)}
+.copy-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- swatches ---------- */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-top:48px}
+.swatch{display:block;text-align:left;background:var(--surface);border:1px solid var(--line);color:inherit;font-family:inherit;cursor:pointer;position:relative;transition:border-color var(--dur-fast) var(--ease-out)}
+.swatch:hover{border-color:var(--white)}
+.swatch:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.swatch.is-active{border-color:var(--accent)}
+.swatch.is-active::after{content:"+";position:absolute;top:8px;right:8px;width:16px;height:16px;display:flex;align-items:center;justify-content:center;background:var(--accent);color:var(--black);font-family:var(--font-mono);font-size:13px;line-height:1}
+.sw-fill{height:84px;background:var(--sw)}
+.sw-body{padding:14px 16px 16px}
+.sw-name{font-size:.9375rem;font-weight:500;color:var(--white)}
+.sw-hex{font-family:var(--font-mono);font-size:12px;color:var(--grey);margin-top:4px;cursor:pointer;display:inline-block}
+.sw-hex:hover{color:var(--white)}
+.sw-contrast{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--grey-dim);margin-top:10px}
+.sw-contrast b{color:var(--grey);font-weight:500}
+
+/* ---------- preview ---------- */
+.preview{margin-top:80px;border-top:1px solid var(--line);padding-top:32px}
+.sec-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.sec-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.sec-label b{color:var(--white);font-weight:500}
+.ctx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.ctx{border:1px solid var(--line-faint);background:var(--surface);padding:24px}
+.ctx-k{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey-dim);margin-bottom:16px}
+.ctx-title{position:relative;display:inline-block;font-size:1.25rem;font-weight:500;letter-spacing:-.01em}
+.ctx-title::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--accent)}
+.ctx-status{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;color:var(--grey)}
+.ctx-status i{width:10px;height:10px;background:var(--accent);display:inline-block}
+.ctx-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--accent);color:var(--white);font-family:var(--font-display);font-size:.9375rem;padding:8px 0}
+.ctx-input::placeholder{color:var(--grey-dim)}
+.ctx-input:focus{outline:none}
+.ctx-btn{display:inline-flex;padding:12px 20px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out)}
+.ctx-btn:hover{background:var(--accent);color:var(--black)}
+.ctx-spark{width:100%;height:44px;display:block}
+.ctx-spark path{stroke:var(--accent);stroke-width:1.5;fill:none}
+.ctx-code{font-family:var(--font-mono);font-size:13px;color:var(--grey);line-height:1.6}
+.ctx-code b{color:var(--accent);font-weight:500}
+
+/* ---------- notes ---------- */
+.notes{margin-top:64px}
+.notes-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+.notes-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);font-weight:500;margin:28px 0 10px}
+.notes-col h3:first-child{margin-top:0}
+.notes-col p{color:var(--grey);font-size:.9375rem;line-height:1.65;max-width:60ch}
+
+.foot{margin-top:80px;border-top:1px solid var(--line);padding-top:24px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey-dim)}
+
+@media(max-width:768px){
+  body{padding:40px 24px}
+  .notes-grid{grid-template-columns:1fr;gap:40px}
+}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>STUDY</b> / ACCENT · 10 OPTIONS · HOT-SWAP</div>
+
+<header class="head wrap">
+  <h1>Accent</h1>
+  <p>Click any swatch to hot-swap the accent across every preview below. All ten are tested on the kit's #050505 ground. Click a hex to copy the value, or use the buttons to copy the CSS variable.</p>
+  <div class="readout">
+    <span class="readout-chip" aria-hidden="true"></span>
+    <span class="readout-name" id="rName">Signal Red</span>
+    <span class="readout-hex" id="rHex">#FF3000</span>
+    <button class="copy-btn" id="copyVar" type="button">Copy --accent</button>
+    <button class="copy-btn" id="copyAll" type="button">Copy all 10</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="swatches" id="swatches" aria-label="Accent swatches"></section>
+
+  <section class="preview">
+    <div class="sec-label"><b>PREVIEW</b> / ACCENT IN CONTEXT</div>
+    <div class="ctx-grid">
+      <div class="ctx"><div class="ctx-k">Title rule</div><span class="ctx-title">Selected work</span></div>
+      <div class="ctx"><div class="ctx-k">Status square</div><div class="ctx-status"><i></i>LIVE / DEPLOYED</div></div>
+      <div class="ctx"><div class="ctx-k">Focus underline</div><input class="ctx-input" type="text" value="Focused field" aria-label="Focus underline sample"></div>
+      <div class="ctx"><div class="ctx-k">Accent button</div><button class="ctx-btn" type="button">Start a project</button></div>
+      <div class="ctx"><div class="ctx-k">Data line</div><svg class="ctx-spark" viewBox="0 0 120 44" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 L20 24 L40 28 L60 14 L80 20 L100 8 L120 12"/></svg></div>
+      <div class="ctx"><div class="ctx-k">Code token</div><div class="ctx-code">const <b>reduce</b> = () =&gt;</div></div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <div class="sec-label"><b>NOTES</b> / <span id="notesName">SIGNAL RED</span></div>
+    <div class="notes-grid">
+      <div class="notes-col">
+        <h3>Personality</h3><p id="nPersonality"></p>
+        <h3>Fit with the kit</h3><p id="nFit"></p>
+      </div>
+      <div class="notes-col">
+        <h3>Use it for</h3><p id="nUse"></p>
+        <h3>Avoid it for</h3><p id="nAvoid"></p>
+        <h3>Contrast on #050505</h3><p id="nContrast"></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    Accent study · 10 options on the locked brand kit · 2026-07-07 · dark-only, contrast vs the #050505 ground
+  </footer>
+</main>
+
+<script>
+const COLORS = [
+  {name:"Signal Red", hex:"#FF3000",
+    personality:"Maximum alarm. The loudest, most saturated token in the set.",
+    fit:"Matches the brutalist aggression, but next to restrained hairlines it can read as shouty or cheap. It is the kit's current accent, so everything already ships in it.",
+    use:"A single high-stakes call to action where urgency is the message.",
+    avoid:"If the brand should read as calm, senior, or engineering-led rather than alert."},
+  {name:"Phosphor", hex:"#3DDC97",
+    personality:"Terminal phosphor. The developer classic, calm and nostalgic without being retro.",
+    fit:"Sits naturally on black with mono type and reads as 'this person writes code.' Its lower saturation keeps it from competing with the hairlines.",
+    use:"A natural default for a developer brand that wants warmth without aggression.",
+    avoid:"Surfaces where green already means success or go, it collides with status semantics."},
+  {name:"Electric Cyan", hex:"#22D3EE",
+    personality:"Cool, precise, electrical. Reads as data and signal.",
+    fit:"Pairs cleanly with the terminal aesthetic and feels engineered, not decorated. Slightly clinical.",
+    use:"A data-heavy or analytics-facing brand.",
+    avoid:"If you want warmth or humanity, cyan leans cold."},
+  {name:"Amber", hex:"#FFB300",
+    personality:"CRT amber. Warm, retro-terminal, friendlier than green.",
+    fit:"Brings warmth to black without losing the terminal reference. Ages well and feels considered.",
+    use:"A brand that wants both warmth and technical credibility.",
+    avoid:"Next to warm or yellow photography, it can muddy."},
+  {name:"Cobalt", hex:"#3B82F6",
+    personality:"Trustworthy, conventional, the default tech blue. Safe.",
+    fit:"Reads as professional SaaS, but it is the closest option to the generic AI-tech blue the kit deliberately avoids, so it risks looking like everyone else.",
+    use:"An enterprise or conservative audience that expects blue.",
+    avoid:"If differentiation matters, this is the most default choice on the page."},
+  {name:"Rose", hex:"#FF3D81",
+    personality:"Warm magenta. Personality-forward and energetic without red's alarm.",
+    fit:"Adds a human, designed feel, less corporate than blue and less aggressive than red. Pairs well with mono type.",
+    use:"A brand that wants to feel crafted and contemporary.",
+    avoid:"Tones that must read strictly technical or clinical."},
+  {name:"Acid", hex:"#C6FF00",
+    personality:"Sharp, punk, brutalist. The highest contrast on black of the set.",
+    fit:"Maximal brutalist energy, undeniable on black. Loud and opinionated, it can overwhelm quiet type.",
+    use:"A bold, art-directed brand that wants to be remembered.",
+    avoid:"If restraint is the point, this shouts."},
+  {name:"Tangerine", hex:"#FF6B00",
+    personality:"Warm orange, energetic, adjacent to red but friendlier.",
+    fit:"Keeps red's warmth and energy but drops the alarm, reading as active and in-progress.",
+    use:"If you liked red's energy but not its aggression.",
+    avoid:"Cool or clinical brands, it is decidedly warm."},
+  {name:"Teal", hex:"#2DD4BF",
+    personality:"Calm, sophisticated, technical. Cooler than green, warmer than cyan.",
+    fit:"Quiet confidence. Reads as senior, considered, and modern without shouting.",
+    use:"A mature engineering brand that leads with craft.",
+    avoid:"If you need maximum visibility or punch, teal is restrained."},
+  {name:"Gold", hex:"#FBBF24",
+    personality:"Premium, warm, metallic. Reads as quality and value.",
+    fit:"Adds a premium, editorial note, warm on black, less terminal and more crafted.",
+    use:"A brand leaning premium or editorial rather than pure terminal.",
+    avoid:"If it reads too luxury for a working developer tool."}
+];
+
+const BG = "#050505";
+function lin(c){ c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); }
+function lum(hex){ const n=parseInt(hex.slice(1),16); return 0.2126*lin((n>>16)&255)+0.7152*lin((n>>8)&255)+0.0722*lin(n&255); }
+function ratio(a,b){ const hi=Math.max(lum(a),lum(b)), lo=Math.min(lum(a),lum(b)); return (hi+0.05)/(lo+0.05); }
+function wcag(r){ return r>=7?"AAA":r>=4.5?"AA":r>=3?"AA (large)":"fail"; }
+
+const grid = document.getElementById("swatches");
+let current = 0;
+
+COLORS.forEach((c, i) => {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "swatch";
+  btn.setAttribute("aria-label", `Select ${c.name} accent, ${c.hex}`);
+  btn.setAttribute("aria-pressed", i===0 ? "true" : "false");
+  if (i===0) btn.classList.add("is-active");
+
+  const fill = document.createElement("div");
+  fill.className = "sw-fill";
+  fill.style.background = c.hex;
+
+  const body = document.createElement("div");
+  body.className = "sw-body";
+  const name = document.createElement("div");
+  name.className = "sw-name";
+  name.textContent = c.name;
+  const hex = document.createElement("span");
+  hex.className = "sw-hex";
+  hex.textContent = c.hex;
+  hex.setAttribute("role","button");
+  hex.setAttribute("tabindex","0");
+  hex.setAttribute("aria-label",`Copy ${c.hex}`);
+  const r = ratio(c.hex, BG);
+  const con = document.createElement("div");
+  con.className = "sw-contrast";
+  con.appendChild(document.createTextNode(`${r.toFixed(1)}:1 `));
+  const badge = document.createElement("b");
+  badge.textContent = wcag(r);
+  con.appendChild(badge);
+
+  body.append(name, hex, con);
+  btn.append(fill, body);
+  grid.appendChild(btn);
+
+  btn.addEventListener("click", () => select(i));
+  const copyHex = (e) => { e.stopPropagation(); copyText(c.hex); flash(hex, "copied"); };
+  hex.addEventListener("click", copyHex);
+  hex.addEventListener("keydown", (e) => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); copyHex(e); } });
+});
+
+function select(i){
+  current = i;
+  const c = COLORS[i];
+  document.documentElement.style.setProperty("--accent", c.hex);
+  document.querySelectorAll(".swatch").forEach((s,j) => {
+    s.classList.toggle("is-active", j===i);
+    s.setAttribute("aria-pressed", j===i ? "true" : "false");
+  });
+  document.getElementById("rName").textContent = c.name;
+  document.getElementById("rHex").textContent = c.hex;
+  document.getElementById("notesName").textContent = c.name.toUpperCase();
+  document.getElementById("nPersonality").textContent = c.personality;
+  document.getElementById("nFit").textContent = c.fit;
+  document.getElementById("nUse").textContent = c.use;
+  document.getElementById("nAvoid").textContent = c.avoid;
+  const r = ratio(c.hex, BG);
+  document.getElementById("nContrast").textContent = `${r.toFixed(1)}:1 on #050505, ${wcag(r)} for text. All ten pass the 3:1 minimum for UI and focus rings.`;
+}
+select(0);
+
+async function copyText(t){ try { await navigator.clipboard.writeText(t); } catch(e){ /* clipboard blocked */ } }
+function flash(el, msg){
+  const prev = el.dataset.prev || el.textContent;
+  el.dataset.prev = prev;
+  el.textContent = msg;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.textContent = prev; }, 1200);
+}
+
+document.getElementById("copyVar").addEventListener("click", (e) => {
+  copyText(`--accent: ${COLORS[current].hex};`);
+  flash(e.currentTarget, "copied");
+});
+document.getElementById("copyAll").addEventListener("click", (e) => {
+  const slug = s => s.toLowerCase().replace(/\s+/g,"-");
+  let out = ":root{\n";
+  COLORS.forEach(c => { out += `  --accent-${slug(c.name)}:${c.hex};\n`; });
+  out += "}";
+  copyText(out);
+  flash(e.currentTarget, "copied");
+});
+</script>
+</body>
+</html>

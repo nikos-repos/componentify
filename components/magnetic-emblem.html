@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component M · Magnetic Emblem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.replay{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--line);color:var(--ivory);padding:8px 16px;cursor:pointer;margin-top:40px;transition:border-color var(--dur-fast) var(--ease)}
+.replay:hover{border-color:var(--ivory)}
+.replay:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+/* Component M · Magnetic Emblem */
+.magnetic-emblem{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:360px}
+.halo{position:absolute;left:50%;top:50%;width:260px;height:260px;border-radius:9999px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(201,162,75,.30) 0%,rgba(201,162,75,.08) 38%,transparent 66%);pointer-events:none}
+@media(min-width:640px){.halo{width:320px;height:320px}}
+.emblem-outer{position:relative}
+.emblem-img{display:block;width:7rem;transform-origin:center;filter:drop-shadow(0 0 28px rgba(201,162,75,.24));user-select:none;-webkit-user-drag:none;will-change:transform}
+.emblem-hint{margin-top:24px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+
+@keyframes hf-emblem-in{from{opacity:0;transform:translateY(16px) scale(.92);filter:blur(12px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes hf-halo{0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(1)}50%{opacity:.82;transform:translate(-50%,-50%) scale(1.07)}}
+.animate-emblem{opacity:0;animation:hf-emblem-in 1.7s var(--ease) forwards;animation-delay:.1s}
+.animate-halo{animation:hf-halo 7.5s ease-in-out infinite}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  .animate-emblem{opacity:1 !important}
+}
+</style>
+</head>
+<body>
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT M</b> / MAGNETIC EMBLEM · PROXIMITY MAGNIFICATION + HALO</div>
+
+<div class="magnetic-emblem">
+  <div class="halo animate-halo" aria-hidden="true"></div>
+  <div class="emblem-outer animate-emblem">
+    <img class="emblem-img" src="hallowed-assets/emblem-ivory.png" alt="Hallowed Finance emblem - an upraised hand bearing the all-seeing eye within a radiant triangle" draggable="false">
+  </div>
+  <div class="emblem-hint">Move the cursor close to magnify.</div>
+</div>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / MAGNETIC EMBLEM</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>macOS-dock-style proximity magnification paired with a breathing radial gold halo. The entrance animation lives on an outer wrapper; the per-frame magnification is written straight to the inner img's transform so the two never fight over the same property. A rAF loop lerps current scale toward target only while unsettled, then stops.</p>
+      <h3>When to use</h3>
+      <p>The single hero mark, one instance per screen. It is the focal crest of the page, not a decorative tile. Reserve it for the hero where it can command space and light.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Influence</dt><dd>190px radius of effect</dd>
+        <dt>Max scale</dt><dd>1.1 at centre</dd>
+        <dt>Smoothing</dt><dd>0.16 per-frame lerp</dd>
+        <dt>Ease</dt><dd>easeOutCubic on distance</dd>
+        <dt>Loop</dt><dd>rAF stops when |target-current|&lt;0.001</dd>
+        <dt>Halo</dt><dd>7.5s, opacity .4 to .82, scale 1 to 1.07</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>No small icons, no multiple instances on one screen, never run the magnification under reduced-motion. The halo is part of the mark, do not recolour it.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.magnetic-emblem{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:360px}
+.halo{position:absolute;left:50%;top:50%;width:260px;height:260px;border-radius:9999px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(201,162,75,.30) 0%,rgba(201,162,75,.08) 38%,transparent 66%);pointer-events:none}
+@media(min-width:640px){.halo{width:320px;height:320px}}
+.emblem-outer{position:relative}
+.emblem-img{display:block;width:7rem;transform-origin:center;filter:drop-shadow(0 0 28px rgba(201,162,75,.24));user-select:none;-webkit-user-drag:none;will-change:transform}
+.emblem-hint{margin-top:24px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+@keyframes hf-emblem-in{from{opacity:0;transform:translateY(16px) scale(.92);filter:blur(12px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes hf-halo{0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(1)}50%{opacity:.82;transform:translate(-50%,-50%) scale(1.07)}}
+.animate-emblem{opacity:0;animation:hf-emblem-in 1.7s var(--ease) forwards;animation-delay:.1s}
+.animate-halo{animation:hf-halo 7.5s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  .animate-emblem{opacity:1 !important}
+}
+&lt;/style&gt;
+
+&lt;div class="magnetic-emblem"&gt;
+  &lt;div class="halo animate-halo" aria-hidden="true"&gt;&lt;/div&gt;
+  &lt;div class="emblem-outer animate-emblem"&gt;
+    &lt;img class="emblem-img" src="hallowed-assets/emblem-ivory.png" alt="Hallowed Finance emblem - an upraised hand bearing the all-seeing eye within a radiant triangle" draggable="false"&gt;
+  &lt;/div&gt;
+  &lt;div class="emblem-hint"&gt;Move the cursor close to magnify.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+(function(){
+  // Reduced-motion: skip magnification entirely. Emblem stays at scale 1,
+  // opacity 1 (entrance suppressed via CSS override). Halo suppressed via CSS.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var INFLUENCE = 190;   // px radius within which the cursor has any effect
+  var MAX_SCALE = 1.1;   // peak magnification at the centre
+  var SMOOTHING = 0.16;  // per-frame lerp toward the target scale
+  var easeOutCubic = function(t){ return 1 - Math.pow(1 - t, 3); };
+
+  var img = document.querySelector('.emblem-img');
+  if (!img) return;
+
+  var frame = 0, running = false, current = 1, target = 1;
+
+  function render(){
+    current += (target - current) * SMOOTHING;
+    var settled = Math.abs(target - current) &lt; 0.001;
+    if (settled) current = target;
+    img.style.transform = 'scale(' + current.toFixed(4) + ')';
+    if (settled){ running = false; return; }
+    frame = requestAnimationFrame(render);
+  }
+  function ensureRunning(){
+    if (!running){ running = true; frame = requestAnimationFrame(render); }
+  }
+  function handleMove(e){
+    var r = img.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var d = Math.hypot(e.clientX - cx, e.clientY - cy);
+    target = d &lt; INFLUENCE ? 1 + (MAX_SCALE - 1) * easeOutCubic(1 - d / INFLUENCE) : 1;
+    ensureRunning();
+  }
+  function handleLeave(){ target = 1; ensureRunning(); }
+
+  window.addEventListener('mousemove', handleMove);
+  window.addEventListener('mouseout', handleLeave);
+  window.addEventListener('blur', handleLeave);
+})();
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+(function(){
+  // Reduced-motion: skip magnification entirely. Emblem stays at scale 1,
+  // opacity 1 (entrance suppressed via CSS override). Halo suppressed via CSS.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var INFLUENCE = 190;   // px radius within which the cursor has any effect
+  var MAX_SCALE = 1.1;   // peak magnification at the centre
+  var SMOOTHING = 0.16;  // per-frame lerp toward the target scale
+  var easeOutCubic = function(t){ return 1 - Math.pow(1 - t, 3); };
+
+  var img = document.querySelector('.emblem-img');
+  if (!img) return;
+
+  var frame = 0, running = false, current = 1, target = 1;
+
+  function render(){
+    current += (target - current) * SMOOTHING;
+    var settled = Math.abs(target - current) < 0.001;
+    if (settled) current = target;
+    img.style.transform = 'scale(' + current.toFixed(4) + ')';
+    if (settled){ running = false; return; }
+    frame = requestAnimationFrame(render);
+  }
+  function ensureRunning(){
+    if (!running){ running = true; frame = requestAnimationFrame(render); }
+  }
+  function handleMove(e){
+    var r = img.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var d = Math.hypot(e.clientX - cx, e.clientY - cy);
+    target = d < INFLUENCE ? 1 + (MAX_SCALE - 1) * easeOutCubic(1 - d / INFLUENCE) : 1;
+    ensureRunning();
+  }
+  function handleLeave(){ target = 1; ensureRunning(); }
+
+  window.addEventListener('mousemove', handleMove);
+  window.addEventListener('mouseout', handleLeave);
+  window.addEventListener('blur', handleLeave);
+})();
+</script>
+</body>
+</html>

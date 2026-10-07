@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component C · ASCII Lava Hero Background</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<style>
+:root{
+  --black:#050505;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display)}
+
+/* ============ COMPONENT: FIXED ASCII LAVA BACKGROUND ============ */
+#ascii{
+  position:fixed;inset:0;z-index:0;overflow:hidden;
+  font-family:var(--font-mono);font-size:12px;line-height:1.35;
+  color:rgba(34,211,238,.09);
+  white-space:pre;pointer-events:none;user-select:none;
+}
+
+/* demo content on top - scroll to verify the background stays fixed */
+main{position:relative;z-index:1;padding:0 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;padding-top:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--white);font-weight:500}
+.hero{min-height:90vh;display:flex;flex-direction:column;justify-content:center;max-width:1440px;margin:0 auto}
+.hero h1{font-size:clamp(2.75rem,7vw,6rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;max-width:14ch}
+.hero h1 em{font-style:normal;color:var(--grey-dim)}
+.hero p{color:var(--grey);max-width:52ch;margin-top:40px}
+section.filler{border-top:1px solid var(--line);padding:96px 0;min-height:60vh}
+section.filler .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:24px}
+section.filler h2{font-size:clamp(2rem,4vw,3.5rem);font-weight:700;letter-spacing:-.02em;line-height:1.05}
+
+/* ============ GUIDE ============ */
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--white);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--grey);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--grey);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--grey);white-space:pre;border-radius:.75rem!important}
+.usage b{color:var(--white);font-weight:500}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<pre id="ascii" aria-hidden="true"></pre>
+
+<main>
+  <div class="demo-label"><b>COMPONENT C</b> / ASCII LAVA BACKGROUND · FIXED WHILE SCROLLING</div>
+  <div class="hero">
+    <h1>Engineered,<br>not decorated.<br><em>Each pixel earns its place.</em></h1>
+    <p>The ASCII field animation behind this text rises like a lava lamp from the bottom of the screen. Scroll and it holds position while the page moves over it.</p>
+  </div>
+  <section class="filler"><span class="k">001 / SCROLL CHECK</span><h2>The background does not move with the page.</h2></section>
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / ASCII LAVA BACKGROUND</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A fixed full-viewport ASCII field that breathes upward like a lava lamp, sitting behind the page content. A cheap three-sine pseudo-noise sampled on a character grid, rendered as one textContent write per tick at roughly 11fps.</p>
+      <h3>When to use</h3>
+      <p>The hero and top of the home page, where the field can hold steady while the page scrolls over it. Pair with a solid headline and keep body copy short, so the texture stays behind the message, not under it.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>rgba cyan .09 field, --line-faint rules</dd>
+        <dt>Motion</dt><dd>3-sine field, ~11fps, y-phase drift</dd>
+        <dt>A11y</dt><dd>aria-hidden, pointer-events none, reduced-motion static</dd>
+        <dt>Perf</dt><dd>one textContent write per tick, no canvas</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Do not raise the field opacity above .12, it competes with text. Do not animate top or left, only the character buffer. Keep it at z-index 0 behind the content.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;!-- Requires GSAP: https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js --&gt;
+
+&lt;style&gt;
+:root{
+  --black:#050505;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display)}
+#ascii{
+  position:fixed;inset:0;z-index:0;overflow:hidden;
+  font-family:var(--font-mono);font-size:12px;line-height:1.35;
+  color:rgba(34,211,238,.09);
+  white-space:pre;pointer-events:none;user-select:none;
+}
+main{position:relative;z-index:1;padding:0 48px}
+.hero{min-height:90vh;display:flex;flex-direction:column;justify-content:center;max-width:1440px;margin:0 auto}
+.hero h1{font-size:clamp(2.75rem,7vw,6rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;max-width:14ch}
+.hero h1 em{font-style:normal;color:var(--grey-dim)}
+.hero p{color:var(--grey);max-width:52ch;margin-top:40px}
+section.filler{border-top:1px solid var(--line);padding:96px 0;min-height:60vh}
+section.filler .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:24px}
+section.filler h2{font-size:clamp(2rem,4vw,3.5rem);font-weight:700;letter-spacing:-.02em;line-height:1.05}
+&lt;/style&gt;
+
+&lt;div class="hero"&gt;
+    &lt;h1&gt;Engineered,&lt;br&gt;not decorated.&lt;br&gt;&lt;em&gt;Each pixel earns its place.&lt;/em&gt;&lt;/h1&gt;
+    &lt;p&gt;The ASCII field animation behind this text rises like a lava lamp from the bottom of the screen. Scroll and it holds position while the page moves over it.&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;section class="filler"&gt;&lt;span class="k"&gt;001 / SCROLL CHECK&lt;/span&gt;&lt;h2&gt;The background does not move with the page.&lt;/h2&gt;&lt;/section&gt;
+
+&lt;script&gt;
+/* Lava-lamp ASCII field. A cheap 3-sine pseudo-noise field sampled on a
+   character grid; the y-phase advances with time so the blobs rise from
+   the bottom of the screen. Rendered as one textContent write per tick. */
+const el = document.getElementById("ascii");
+const RAMP = " .:-=+*#";
+let cols = 0, rows = 0;
+
+function measure(){
+  const probe = document.createElement("span");
+  probe.textContent = "MMMMMMMMMM";
+  probe.style.cssText = "position:absolute;visibility:hidden;font:inherit";
+  el.appendChild(probe);
+  const cw = probe.getBoundingClientRect().width / 10;
+  el.removeChild(probe);
+  const lh = parseFloat(getComputedStyle(el).lineHeight);
+  cols = Math.ceil(innerWidth / cw);
+  rows = Math.ceil(innerHeight / lh) + 1;
+}
+
+function render(t){
+  let out = "";
+  for (let y = 0; y &lt; rows; y++){
+    for (let x = 0; x &lt; cols; x++){
+      const u = x * 0.45; // aspect correction so blobs read round, not stretched
+      let n = Math.sin(u * 0.35 + Math.sin(t * 0.5 + y * 0.12) * 1.4)
+            + Math.sin(y * 0.16 + t * 1.1)   /* +t on the y phase = upward drift */
+            + Math.sin((u * 0.12 + y * 0.09) + t * 0.4);
+      n = (n + 3) / 6; // normalize to 0..1
+      out += n &gt; 0.72 ? RAMP[Math.min(RAMP.length - 1, (((n - 0.72) / 0.28) * RAMP.length) | 0)] : " ";
+    }
+    out += "\n";
+  }
+  el.textContent = out;
+}
+
+/* ~11fps via ticker throttle - chunky character motion is the
+   aesthetic; move to canvas if a profiler ever says the pre repaint hurts */
+let last = -1;
+function tick(time){
+  if (time - last &lt; 0.09) return;
+  last = time;
+  render(time * 0.7);
+}
+
+const mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, (ctx) =&gt; {
+  measure();
+  if (ctx.conditions.full){
+    gsap.ticker.add(tick);
+    return () =&gt; gsap.ticker.remove(tick);
+  }
+  render(0); // reduced motion: one static frame
+});
+addEventListener("resize", measure);
+&lt;/script&gt;</code></pre>
+</section>
+</main>
+
+<script>
+/* Lava-lamp ASCII field. A cheap 3-sine pseudo-noise field sampled on a
+   character grid; the y-phase advances with time so the blobs rise from
+   the bottom of the screen. Rendered as one textContent write per tick. */
+const el = document.getElementById("ascii");
+const RAMP = " .:-=+*#";
+let cols = 0, rows = 0;
+
+function measure(){
+  const probe = document.createElement("span");
+  probe.textContent = "MMMMMMMMMM";
+  probe.style.cssText = "position:absolute;visibility:hidden;font:inherit";
+  el.appendChild(probe);
+  const cw = probe.getBoundingClientRect().width / 10;
+  el.removeChild(probe);
+  const lh = parseFloat(getComputedStyle(el).lineHeight);
+  cols = Math.ceil(innerWidth / cw);
+  rows = Math.ceil(innerHeight / lh) + 1;
+}
+
+function render(t){
+  let out = "";
+  for (let y = 0; y < rows; y++){
+    for (let x = 0; x < cols; x++){
+      const u = x * 0.45; // aspect correction so blobs read round, not stretched
+      let n = Math.sin(u * 0.35 + Math.sin(t * 0.5 + y * 0.12) * 1.4)
+            + Math.sin(y * 0.16 + t * 1.1)   /* +t on the y phase = upward drift */
+            + Math.sin((u * 0.12 + y * 0.09) + t * 0.4);
+      n = (n + 3) / 6; // normalize to 0..1
+      out += n > 0.72 ? RAMP[Math.min(RAMP.length - 1, (((n - 0.72) / 0.28) * RAMP.length) | 0)] : " ";
+    }
+    out += "\n";
+  }
+  el.textContent = out;
+}
+
+/* ~11fps via ticker throttle - chunky character motion is the
+   aesthetic; move to canvas if a profiler ever says the pre repaint hurts */
+let last = -1;
+function tick(time){
+  if (time - last < 0.09) return;
+  last = time;
+  render(time * 0.7);
+}
+
+const mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, (ctx) => {
+  measure();
+  if (ctx.conditions.full){
+    gsap.ticker.add(tick);
+    return () => gsap.ticker.remove(tick);
+  }
+  render(0); // reduced motion: one static frame
+});
+addEventListener("resize", measure);
+</script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component I · Kinetic Marquee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<style>
+:root{
+  --black:#050505;--surface:#0C0C0C;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --dur-fast:150ms;--dur-base:300ms;--ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--white);font-weight:500}
+
+/* ============ COMPONENT: KINETIC MARQUEE ============ */
+/* full-bleed: break out of the page padding so the band reads edge to edge */
+.mq{margin:0 -48px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:24px 0}
+.mq-track{display:flex;width:max-content;will-change:transform}
+.mq-group{display:flex;align-items:center;gap:40px;padding-right:40px}
+.mq-item{font-family:var(--font-mono);font-size:clamp(1.125rem,2.4vw,1.75rem);font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--grey);white-space:nowrap;transition:color var(--dur-base) var(--ease-out)}
+.mq-group:hover .mq-item{color:var(--white)} /* ponytail: hover-brighten via group, no per-item JS */
+.mq-sep{color:var(--grey-dim);font-weight:400;user-select:none}
+
+/* ============ GUIDE ============ */
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--white);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--grey);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--grey);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--grey);white-space:pre;border-radius:.75rem!important}
+.usage b{color:var(--white);font-weight:500}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT I</b> / KINETIC MARQUEE · SEAMLESS LOOP, PAUSE + REVERSE ON HOVER</div>
+
+<div class="mq" id="mq">
+  <div class="mq-track" id="track">
+    <div class="mq-group" aria-hidden="false">
+      <span class="mq-item">TypeScript</span><span class="mq-sep">+</span>
+      <span class="mq-item">React</span><span class="mq-sep">+</span>
+      <span class="mq-item">GSAP</span><span class="mq-sep">+</span>
+      <span class="mq-item">Node</span><span class="mq-sep">+</span>
+      <span class="mq-item">CSS</span><span class="mq-sep">+</span>
+      <span class="mq-item">A11y</span><span class="mq-sep">+</span>
+      <span class="mq-item">Design systems</span><span class="mq-sep">+</span>
+      <span class="mq-item">Performance</span><span class="mq-sep">+</span>
+    </div>
+    <div class="mq-group" aria-hidden="true">
+      <span class="mq-item">TypeScript</span><span class="mq-sep">+</span>
+      <span class="mq-item">React</span><span class="mq-sep">+</span>
+      <span class="mq-item">GSAP</span><span class="mq-sep">+</span>
+      <span class="mq-item">Node</span><span class="mq-sep">+</span>
+      <span class="mq-item">CSS</span><span class="mq-sep">+</span>
+      <span class="mq-item">A11y</span><span class="mq-sep">+</span>
+      <span class="mq-item">Design systems</span><span class="mq-sep">+</span>
+      <span class="mq-item">Performance</span><span class="mq-sep">+</span>
+    </div>
+  </div>
+</div>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / KINETIC MARQUEE</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A full-bleed band of mono caps scrolling left without a seam. Two identical groups sit side by side, the track shifts by exactly one group width, then loops. Pause on hover eases the timeScale to zero; on leave it resumes the opposite way, so each hover flips the band's direction.</p>
+      <h3>When to use</h3>
+      <p>Exactly once per page: a skills strip under the hero, or a single manifesto line between sections. Two marquees on one page reads as filler. Reduced motion freezes the track at its start position.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--grey items, --grey-dim separators, --line edges</dd>
+        <dt>Motion</dt><dd>xPercent -50, 20s linear, pause then reverse</dd>
+        <dt>A11y</dt><dd>second group aria-hidden, reduced-motion static</dd>
+        <dt>Layout</dt><dd>full-bleed, width max-content, no wrap</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Never two on a page. No accent separators, the band stays neutral so an accent CTA elsewhere can lead. Do not animate margin or left, transform only.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;!-- Requires GSAP: https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js --&gt;
+
+&lt;style&gt;
+:root{
+  --black:#050505;--surface:#0C0C0C;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --dur-fast:150ms;--dur-base:300ms;--ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display);min-height:100vh;padding:64px 48px}
+.mq{margin:0 -48px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:24px 0}
+.mq-track{display:flex;width:max-content;will-change:transform}
+.mq-group{display:flex;align-items:center;gap:40px;padding-right:40px}
+.mq-item{font-family:var(--font-mono);font-size:clamp(1.125rem,2.4vw,1.75rem);font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--grey);white-space:nowrap;transition:color var(--dur-base) var(--ease-out)}
+.mq-group:hover .mq-item{color:var(--white)}
+.mq-sep{color:var(--grey-dim);font-weight:400;user-select:none}
+&lt;/style&gt;
+
+&lt;div class="mq" id="mq"&gt;
+  &lt;div class="mq-track" id="track"&gt;
+    &lt;div class="mq-group" aria-hidden="false"&gt;
+      &lt;span class="mq-item"&gt;TypeScript&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;React&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;GSAP&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;Node&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;CSS&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;A11y&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;Design systems&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;Performance&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="mq-group" aria-hidden="true"&gt;
+      &lt;span class="mq-item"&gt;TypeScript&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;React&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;GSAP&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;Node&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;CSS&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;A11y&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;Design systems&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+      &lt;span class="mq-item"&gt;Performance&lt;/span&gt;&lt;span class="mq-sep"&gt;+&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+const mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, (ctx) =&gt; {
+  if (!ctx.conditions.full) return;
+  const tween = gsap.to("#track", {xPercent:-50, duration:20, ease:"none", repeat:-1});
+  tween.totalTime(40000); // start deep in the loop so reversing doesn't pin at the seam (~11h headroom)
+  const mq = document.getElementById("mq");
+  let dir = 1; // flip sign each hover so the band reverses on resume
+  mq.addEventListener("mouseenter", () =&gt; gsap.to(tween, {timeScale:0, duration:0.4}));
+  mq.addEventListener("mouseleave", () =&gt; gsap.to(tween, {timeScale:dir = -dir, duration:0.4}));
+  return () =&gt; tween.kill();
+});
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+const mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, (ctx) => {
+  if (!ctx.conditions.full) return;
+  const tween = gsap.to("#track", {xPercent:-50, duration:20, ease:"none", repeat:-1});
+  tween.totalTime(40000); // ponytail: start deep in the loop; repeat:-1 clamps at totalTime 0, so a reversed playhead would pin at the seam; ~11h headroom, effectively infinite for a marquee
+  const mq = document.getElementById("mq");
+  let dir = 1; // ponytail: flip sign each hover so the band reverses on resume
+  mq.addEventListener("mouseenter", () => gsap.to(tween, {timeScale:0, duration:0.4}));
+  mq.addEventListener("mouseleave", () => gsap.to(tween, {timeScale:dir = -dir, duration:0.4}));
+  return () => tween.kill();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component K · Text Shimmer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+.replay{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--line);color:var(--ivory);padding:8px 16px;cursor:pointer;display:block;width:fit-content;margin:40px auto 0;transition:border-color var(--dur-fast) var(--ease)}
+.replay:hover{border-color:var(--ivory)}
+.replay:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* Component K · Text Shimmer - CSS animation, replay restarts the sweep */
+.stage{max-width:960px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr;gap:64px;align-items:start}
+@media(max-width:768px){.stage{grid-template-columns:1fr;gap:48px}}
+.shimmer-stack{display:flex;flex-direction:column;gap:36px}
+.kicker{font-family:var(--font-mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase}
+.display{font-family:var(--font-title);font-size:3rem;line-height:1.05;letter-spacing:.01em;font-weight:400}
+.subhead{font-family:var(--font-body);font-size:1.25rem;line-height:1.5;font-weight:300}
+.contrast{display:flex;flex-direction:column;gap:14px;padding-top:8px}
+.contrast .tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.contrast .static-line{font-family:var(--font-title);font-size:3rem;line-height:1.05;letter-spacing:.01em;color:var(--muted);font-weight:400}
+
+/* Verbatim from hallowed-finance/src/index.css (var names mapped to token block) */
+@keyframes hf-shimmer {
+  0% { background-position: 175% 0; }
+  100% { background-position: -75% 0; }
+}
+.text-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    var(--muted) 0%,
+    var(--muted) 42%,
+    var(--gold-soft) 48%,
+    #f7eed1 50%,
+    var(--gold-soft) 52%,
+    var(--muted) 58%,
+    var(--muted) 100%
+  );
+  /* Both gradient ends are the muted colour, so the text is always painted
+     (never clipped to transparent) while the narrow gold band sweeps once per cycle. */
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: hf-shimmer 13s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .text-shimmer {
+    animation: none !important;
+    -webkit-text-fill-color: var(--ivory);
+    color: var(--ivory);
+  }
+}
+</style>
+</head>
+<body>
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT K</b> / TEXT SHIMMER · GOLD GRADIENT TEXT SWEEP</div>
+
+<div class="stage">
+  <div class="shimmer-stack">
+    <span class="kicker text-shimmer">Private Bank · Est. MMXIV</span>
+    <h1 class="display text-shimmer">Capital, kept in confidence.</h1>
+    <p class="subhead text-shimmer">A private banking practice for stewards of permanent capital.</p>
+  </div>
+  <div class="contrast">
+    <span class="tag">Static · no sweep</span>
+    <span class="static-line">Capital, kept in confidence.</span>
+  </div>
+</div>
+
+<button class="replay" id="replay" type="button">↺ Replay</button>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / TEXT SHIMMER</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A slow, narrow gold highlight sweeps across muted text to draw the eye without shouting. Both gradient ends are the muted colour, so the text is always painted, never clipped to transparent; only the band passes.</p>
+      <h3>When to use</h3>
+      <p>Reverent subheads and kickers, one per section. Never long body copy. The sweep is a single accent, not a wash.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Stops</dt><dd>var(--muted) 0/42% · var(--gold-soft) 48% · #f7eed1 50% · var(--gold-soft) 52% · var(--muted) 58/100%</dd>
+        <dt>Size</dt><dd>background-size: 250% 100%</dd>
+        <dt>Motion</dt><dd>hf-shimmer 13s ease-in-out infinite</dd>
+        <dt>A11y</dt><dd>reduced-motion: animation none, fill = var(--ivory)</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>No long paragraphs (the sweep blurs legibility over many lines). No accent-coloured base text (gold is for the band only). One shimmer per viewport.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.stage{max-width:960px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr;gap:64px;align-items:start}
+@media(max-width:768px){.stage{grid-template-columns:1fr;gap:48px}}
+.shimmer-stack{display:flex;flex-direction:column;gap:36px}
+.kicker{font-family:var(--font-mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase}
+.display{font-family:var(--font-title);font-size:3rem;line-height:1.05;letter-spacing:.01em;font-weight:400}
+.subhead{font-family:var(--font-body);font-size:1.25rem;line-height:1.5;font-weight:300}
+.contrast{display:flex;flex-direction:column;gap:14px;padding-top:8px}
+.contrast .tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.contrast .static-line{font-family:var(--font-title);font-size:3rem;line-height:1.05;letter-spacing:.01em;color:var(--muted);font-weight:400}
+@keyframes hf-shimmer {
+  0% { background-position: 175% 0; }
+  100% { background-position: -75% 0; }
+}
+.text-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    var(--muted) 0%,
+    var(--muted) 42%,
+    var(--gold-soft) 48%,
+    #f7eed1 50%,
+    var(--gold-soft) 52%,
+    var(--muted) 58%,
+    var(--muted) 100%
+  );
+  
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: hf-shimmer 13s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .text-shimmer {
+    animation: none !important;
+    -webkit-text-fill-color: var(--ivory);
+    color: var(--ivory);
+  }
+}
+&lt;/style&gt;
+
+&lt;div class="stage"&gt;
+  &lt;div class="shimmer-stack"&gt;
+    &lt;span class="kicker text-shimmer"&gt;Private Bank · Est. MMXIV&lt;/span&gt;
+    &lt;h1 class="display text-shimmer"&gt;Capital, kept in confidence.&lt;/h1&gt;
+    &lt;p class="subhead text-shimmer"&gt;A private banking practice for stewards of permanent capital.&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="contrast"&gt;
+    &lt;span class="tag"&gt;Static · no sweep&lt;/span&gt;
+    &lt;span class="static-line"&gt;Capital, kept in confidence.&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</section>
+
+<script>
+/* replay: the ambient loop is 13s, so a naive restart shows nothing for ~half a cycle.
+   Instead we run one prompt 2.8s sweep, then hand back to the stylesheet's 13s loop. */
+(function () {
+  var nodes = document.querySelectorAll(".text-shimmer");
+  var btn = document.getElementById("replay");
+  if (!btn) return;
+  btn.addEventListener("click", function () {
+    nodes.forEach(function (el) {
+      el.style.animation = "none";                  /* drop whatever is running */
+      void el.offsetWidth;                          /* reflow so the restart registers */
+      el.style.animation = "hf-shimmer 2.8s ease-in-out forwards";  /* one prompt sweep */
+      el.dataset.sweep = "1";
+    });
+  });
+  nodes.forEach(function (el) {
+    el.addEventListener("animationend", function () {   /* fires only for the finite sweep */
+      if (el.dataset.sweep === "1") {
+        el.dataset.sweep = "0";
+        el.style.animation = "";                    /* revert to stylesheet -> ambient loop resumes */
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

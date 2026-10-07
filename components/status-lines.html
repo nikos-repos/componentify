@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component D · Status Lines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<style>
+:root{
+  --black:#050505;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--white);font-weight:500}
+
+/* ============ COMPONENT: STATUS SQUARES + SCANLINE PANEL ============ */
+.status-squares{display:flex;gap:24px;flex-wrap:wrap;max-width:640px;margin:0 auto 24px}
+.status-squares span{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--grey)}
+.status-squares i{display:inline-block;width:9px;height:9px;margin-right:8px}
+
+.scan-panel{
+  max-width:640px;height:220px;margin:0 auto;border:1px solid var(--line);position:relative;overflow:hidden;
+  background:repeating-linear-gradient(0deg,transparent,transparent 5px,var(--line-faint) 5px,var(--line-faint) 6px);
+  display:flex;align-items:center;justify-content:center;
+}
+.scan-panel .cap{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);position:relative;z-index:1}
+.traveler{position:absolute;top:0;bottom:0;left:0;width:1px;background:rgba(255,255,255,.12);pointer-events:none}
+
+/* ============ GUIDE ============ */
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--white);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--grey);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--grey);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--grey);white-space:pre;border-radius:.75rem!important}
+.usage b{color:var(--white);font-weight:500}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT D</b> / STATUS LINES · BREATHING + TRAVELING SCANLINES</div>
+
+<div class="status-squares">
+  <span><i class="sq" style="background:var(--accent)"></i>LIVE / DEPLOYED</span>
+  <span><i class="sq" style="background:var(--white)"></i>IN PROGRESS</span>
+  <span><i class="sq" style="border:1px solid var(--grey-dim)"></i>ARCHIVED</span>
+</div>
+
+<div class="scan-panel" id="panel">
+  <span class="cap">IMG: B&amp;W · +10 CONTRAST · SCANLINE OVERLAY</span>
+</div>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / STATUS LINES</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>Two parts: status squares that breathe in place, each on its own phase, and a scanline panel with sparse vertical travelers drifting across a ruled field. The squares carry real state, the panel is texture.</p>
+      <h3>When to use</h3>
+      <p>Deployment or availability indicators near a project, or a media panel that needs a CRT feel without an image. Use the accent square for one live state per viewport, white for in progress, hollow for archived.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--accent live, --white in progress, --grey-dim archived border</dd>
+        <dt>Motion</dt><dd>square opacity yoyo staggered 0.5s, travelers 5 to 14s</dd>
+        <dt>A11y</dt><dd>squares decorative, state also in text, reduced-motion static</dd>
+        <dt>Perf</dt><dd>traveler start x re-reads clientWidth per pass, no resize hook</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Do not use the accent square for more than one live state per viewport. Do not add a colored dot to every list row, the dot is for real state only. Keep traveler count low, five is enough.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;!-- Requires GSAP: https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js --&gt;
+
+&lt;style&gt;
+:root{
+  --black:#050505;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#22D3EE;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display);min-height:100vh;padding:64px 48px}
+.status-squares{display:flex;gap:24px;flex-wrap:wrap;max-width:640px;margin:0 auto 24px}
+.status-squares span{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--grey)}
+.status-squares i{display:inline-block;width:9px;height:9px;margin-right:8px}
+.scan-panel{
+  max-width:640px;height:220px;margin:0 auto;border:1px solid var(--line);position:relative;overflow:hidden;
+  background:repeating-linear-gradient(0deg,transparent,transparent 5px,var(--line-faint) 5px,var(--line-faint) 6px);
+  display:flex;align-items:center;justify-content:center;
+}
+.scan-panel .cap{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);position:relative;z-index:1}
+.traveler{position:absolute;top:0;bottom:0;left:0;width:1px;background:rgba(255,255,255,.12);pointer-events:none}
+&lt;/style&gt;
+
+&lt;div class="status-squares"&gt;
+  &lt;span&gt;&lt;i class="sq" style="background:var(--accent)"&gt;&lt;/i&gt;LIVE / DEPLOYED&lt;/span&gt;
+  &lt;span&gt;&lt;i class="sq" style="background:var(--white)"&gt;&lt;/i&gt;IN PROGRESS&lt;/span&gt;
+  &lt;span&gt;&lt;i class="sq" style="border:1px solid var(--grey-dim)"&gt;&lt;/i&gt;ARCHIVED&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div class="scan-panel" id="panel"&gt;
+  &lt;span class="cap"&gt;IMG: B&amp;amp;W · +10 CONTRAST · SCANLINE OVERLAY&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+const mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, (ctx) =&gt; {
+  if (!ctx.conditions.full) return;
+
+  // breathing squares - slow opacity pulse, each square offset
+  gsap.to(".sq", {
+    opacity: 0.3,
+    duration: 1.6,
+    ease: "sine.inOut",
+    repeat: -1,
+    yoyo: true,
+    stagger: 0.5
+  });
+
+  // sparse vertical lines drifting right → left across the panel.
+  // repeatRefresh re-rolls the random duration each pass = random separation.
+  const panel = document.getElementById("panel");
+  for (let i = 0; i &lt; 5; i++) {
+    const l = document.createElement("i");
+    l.className = "traveler";
+    panel.appendChild(l);
+    gsap.fromTo(l,
+      { x: () =&gt; panel.clientWidth + 2 },
+      {
+        x: -2,
+        duration: () =&gt; gsap.utils.random(5, 14),
+        ease: "none",
+        repeat: -1,
+        repeatRefresh: true,
+        delay: gsap.utils.random(0, 6)
+      }
+    );
+    /* ponytail: start x reads clientWidth per repeat, so travelers self-correct
+       after resize within one pass - no resize listener needed */
+  }
+});
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+const mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, (ctx) => {
+  if (!ctx.conditions.full) return;
+
+  // breathing squares - slow opacity pulse, each square offset
+  gsap.to(".sq", {
+    opacity: 0.3,
+    duration: 1.6,
+    ease: "sine.inOut",
+    repeat: -1,
+    yoyo: true,
+    stagger: 0.5
+  });
+
+  // sparse vertical lines drifting right → left across the panel.
+  // repeatRefresh re-rolls the random duration each pass = random separation.
+  const panel = document.getElementById("panel");
+  for (let i = 0; i < 5; i++) {
+    const l = document.createElement("i");
+    l.className = "traveler";
+    panel.appendChild(l);
+    gsap.fromTo(l,
+      { x: () => panel.clientWidth + 2 },
+      {
+        x: -2,
+        duration: () => gsap.utils.random(5, 14),
+        ease: "none",
+        repeat: -1,
+        repeatRefresh: true,
+        delay: gsap.utils.random(0, 6)
+      }
+    );
+    /* ponytail: start x reads clientWidth per repeat, so travelers self-correct
+       after resize within one pass - no resize listener needed */
+  }
+});
+</script>
+</body>
+</html>

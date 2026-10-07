@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component P · Bento Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Caslon+Condensed&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.demo-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.demo-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.demo-label b{color:var(--ivory);font-weight:500}
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding-top:32px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--ivory);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--muted);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--muted);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--muted);white-space:pre;border-radius:.75rem}
+.usage b{color:var(--ivory);font-weight:500}
+
+/* ============ COMPONENT: BENTO CARD ============ */
+.bento-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:1040px;margin:0 auto}
+@media(min-width:768px){.bento-grid{grid-template-columns:repeat(6,1fr)}}
+.bento{
+  position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;
+  min-height:180px;padding:24px;overflow:hidden;border-radius:1rem;border:1px solid var(--line);
+  background:linear-gradient(to bottom right,rgba(20,17,11,.7),rgba(20,17,11,.2));
+}
+.bento.feat{grid-column:span 2}
+@media(min-width:768px){.bento.feat{grid-column:span 4}}
+.bento .glyph{position:absolute;inset:0;opacity:.6;pointer-events:none}
+.bento .glyph .scaler{height:100%;width:100%;transition:transform .7s var(--ease)}
+.bento .scrim{position:absolute;inset:0;background:linear-gradient(to top right,var(--surface),rgba(20,17,11,.7),transparent);pointer-events:none}
+.bento .ring{position:absolute;inset:0;border-radius:1rem;box-shadow:inset 0 0 0 1px transparent;transition:box-shadow .5s var(--ease);pointer-events:none}
+.bento .tick{display:block;height:1px;width:2rem;margin-bottom:16px;transform-origin:left center;background:rgba(201,162,75,.5);transition:width .5s var(--ease),background .5s var(--ease)}
+.bento h3{position:relative;font-family:var(--font-title);font-size:1.5rem;font-weight:400;color:var(--ivory);line-height:1.1}
+@media(min-width:768px){.bento h3{font-size:2rem}}
+.bento p{position:relative;color:var(--muted);font-size:.875rem;font-weight:300;line-height:1.6;margin-top:12px;max-width:28rem}
+@media(min-width:768px){.bento p{font-size:1rem}}
+.bento:hover .ring{box-shadow:inset 0 0 0 1px rgba(201,162,75,.4)}
+.bento:hover .tick{width:3.5rem;background:var(--gold)}
+.bento:hover .scaler{transform:scale(1.05)}
+.bento svg{width:100%;height:100%;display:block}
+</style>
+</head>
+<body>
+
+
+<style>
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<div class="demo-label"><b>COMPONENT P</b> / BENTO CARD · HOVER HAIRLINE + GLYPH SCALE</div>
+
+<div class="bento-grid" id="grid">
+
+  <article class="bento feat">
+    <div class="glyph" data-glyph><div class="scaler">
+      <svg viewBox="0 0 600 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="b-stroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#c9a24b" stop-opacity=".3"/><stop offset="100%" stop-color="#e7cd8c"/></linearGradient>
+          <linearGradient id="b-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c9a24b" stop-opacity=".18"/><stop offset="100%" stop-color="#c9a24b" stop-opacity="0"/></linearGradient>
+        </defs>
+        <line x1="0" y1="90" x2="600" y2="90" stroke="#2a2519" stroke-width="1"/>
+        <line x1="0" y1="160" x2="600" y2="160" stroke="#2a2519" stroke-width="1"/>
+        <line x1="0" y1="230" x2="600" y2="230" stroke="#2a2519" stroke-width="1"/>
+        <line x1="0" y1="300" x2="600" y2="300" stroke="#2a2519" stroke-width="1"/>
+        <path d="M0,300 L66,286 L132,300 L198,250 L264,266 L330,210 L396,224 L462,166 L528,178 L600,120 L600,360 L0,360 Z" fill="url(#b-fill)"/>
+        <path d="M0,300 L66,286 L132,300 L198,250 L264,266 L330,210 L396,224 L462,166 L528,178 L600,120" fill="none" stroke="url(#b-stroke)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      </svg>
+    </div></div>
+    <div class="scrim"></div>
+    <div class="ring"></div>
+    <span class="tick"></span>
+    <h3>The Backtesting Suite</h3>
+    <p>Event-driven and tick-accurate engine built on Rust. Apply regime filters post hoc. Lightning fast strategy analysis with honest walk-forward results.</p>
+  </article>
+
+  <article class="bento">
+    <div class="ring"></div>
+    <span class="tick"></span>
+    <h3>Quant Library</h3>
+    <p>A private expanse of curated research, articles, books, and real strategy code.</p>
+  </article>
+
+  <article class="bento">
+    <div class="ring"></div>
+    <span class="tick"></span>
+    <h3>The SDK</h3>
+    <p>Python cookbooks, powerful APIs, directly served to you.</p>
+  </article>
+
+  <article class="bento">
+    <div class="ring"></div>
+    <span class="tick"></span>
+    <h3>Execution</h3>
+    <p>Step-by-step broker integration for live strategy deployment.</p>
+  </article>
+
+  <article class="bento feat">
+    <div class="glyph" data-glyph><div class="scaler">
+      <svg id="b-candles" viewBox="0 0 600 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+    </div></div>
+    <div class="scrim"></div>
+    <div class="ring"></div>
+    <span class="tick"></span>
+    <h3>Quant-Agent</h3>
+    <p>A proprietary AI agent built on top of ohmypi. Fully trained on the Quant-Library dataset.</p>
+  </article>
+
+</div>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / BENTO CARD</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A single bento cell. On hover a gold hairline ignites around the inset ring, the feature glyph scales up behind a scrim, and a small gold tick grows from 2rem to 3.5rem. The outer glyph wrapper owns the scroll scale-fade; the inner scaler owns the hover scale, so the two transforms never fight.</p>
+      <h3>When to use</h3>
+      <p>Feature grids of three to six cells. Give two cells feature status and let their bespoke motifs carry the imagery; keep the rest typographic.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Tokens</dt><dd>--line border, --gold ring + tick, --surface scrim</dd>
+        <dt>Motion</dt><dd>ring + tick .5s; glyph scale .7s; scroll fade scrub</dd>
+        <dt>A11y</dt><dd>glyph aria-hidden, meaning from text</dd>
+        <dt>Layout</dt><dd>6-col grid, feature cells span 4</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>No stock photography in feature cells, the bespoke motif is the image. Never drop the scrim or the lower-left text loses contrast. One hover accent per card.</p>
+    </div>
+  </div>
+  <pre class="usage"><code>&lt;!-- Requires GSAP: https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js --&gt;
+
+&lt;style&gt;
+:root{
+  --bg:#0b0a08;--surface:#14110b;--ivory:#efe8d6;--muted:#9c9078;--faint:#5a5446;
+  --line:#2a2519;--line-faint:rgba(239,232,214,.08);--gold:#c9a24b;--gold-soft:#e7cd8c;
+  --font-display:'Instrument Serif',ui-serif,Georgia,'Times New Roman',serif;
+  --font-title:'Libre Caslon Condensed',ui-serif,Georgia,'Times New Roman',serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);--dur-fast:200ms;--dur-base:400ms;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ivory);font-family:var(--font-body);min-height:100vh;padding:64px 48px}
+.bento-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:1040px;margin:0 auto}
+@media(min-width:768px){.bento-grid{grid-template-columns:repeat(6,1fr)}}
+.bento{
+  position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;
+  min-height:180px;padding:24px;overflow:hidden;border-radius:1rem;border:1px solid var(--line);
+  background:linear-gradient(to bottom right,rgba(20,17,11,.7),rgba(20,17,11,.2));
+}
+.bento.feat{grid-column:span 2}
+@media(min-width:768px){.bento.feat{grid-column:span 4}}
+.bento .glyph{position:absolute;inset:0;opacity:.6;pointer-events:none}
+.bento .glyph .scaler{height:100%;width:100%;transition:transform .7s var(--ease)}
+.bento .scrim{position:absolute;inset:0;background:linear-gradient(to top right,var(--surface),rgba(20,17,11,.7),transparent);pointer-events:none}
+.bento .ring{position:absolute;inset:0;border-radius:1rem;box-shadow:inset 0 0 0 1px transparent;transition:box-shadow .5s var(--ease);pointer-events:none}
+.bento .tick{display:block;height:1px;width:2rem;margin-bottom:16px;transform-origin:left center;background:rgba(201,162,75,.5);transition:width .5s var(--ease),background .5s var(--ease)}
+.bento h3{position:relative;font-family:var(--font-title);font-size:1.5rem;font-weight:400;color:var(--ivory);line-height:1.1}
+@media(min-width:768px){.bento h3{font-size:2rem}}
+.bento p{position:relative;color:var(--muted);font-size:.875rem;font-weight:300;line-height:1.6;margin-top:12px;max-width:28rem}
+@media(min-width:768px){.bento p{font-size:1rem}}
+.bento:hover .ring{box-shadow:inset 0 0 0 1px rgba(201,162,75,.4)}
+.bento:hover .tick{width:3.5rem;background:var(--gold)}
+.bento:hover .scaler{transform:scale(1.05)}
+.bento svg{width:100%;height:100%;display:block}
+&lt;/style&gt;
+
+&lt;div class="bento-grid" id="grid"&gt;
+
+  &lt;article class="bento feat"&gt;
+    &lt;div class="glyph" data-glyph&gt;&lt;div class="scaler"&gt;
+      &lt;svg viewBox="0 0 600 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true"&gt;
+        &lt;defs&gt;
+          &lt;linearGradient id="b-stroke" x1="0" y1="0" x2="1" y2="0"&gt;&lt;stop offset="0%" stop-color="#c9a24b" stop-opacity=".3"/&gt;&lt;stop offset="100%" stop-color="#e7cd8c"/&gt;&lt;/linearGradient&gt;
+          &lt;linearGradient id="b-fill" x1="0" y1="0" x2="0" y2="1"&gt;&lt;stop offset="0%" stop-color="#c9a24b" stop-opacity=".18"/&gt;&lt;stop offset="100%" stop-color="#c9a24b" stop-opacity="0"/&gt;&lt;/linearGradient&gt;
+        &lt;/defs&gt;
+        &lt;line x1="0" y1="90" x2="600" y2="90" stroke="#2a2519" stroke-width="1"/&gt;
+        &lt;line x1="0" y1="160" x2="600" y2="160" stroke="#2a2519" stroke-width="1"/&gt;
+        &lt;line x1="0" y1="230" x2="600" y2="230" stroke="#2a2519" stroke-width="1"/&gt;
+        &lt;line x1="0" y1="300" x2="600" y2="300" stroke="#2a2519" stroke-width="1"/&gt;
+        &lt;path d="M0,300 L66,286 L132,300 L198,250 L264,266 L330,210 L396,224 L462,166 L528,178 L600,120 L600,360 L0,360 Z" fill="url(#b-fill)"/&gt;
+        &lt;path d="M0,300 L66,286 L132,300 L198,250 L264,266 L330,210 L396,224 L462,166 L528,178 L600,120" fill="none" stroke="url(#b-stroke)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/&gt;
+      &lt;/svg&gt;
+    &lt;/div&gt;&lt;/div&gt;
+    &lt;div class="scrim"&gt;&lt;/div&gt;
+    &lt;div class="ring"&gt;&lt;/div&gt;
+    &lt;span class="tick"&gt;&lt;/span&gt;
+    &lt;h3&gt;The Backtesting Suite&lt;/h3&gt;
+    &lt;p&gt;Event-driven and tick-accurate engine built on Rust. Apply regime filters post hoc. Lightning fast strategy analysis with honest walk-forward results.&lt;/p&gt;
+  &lt;/article&gt;
+
+  &lt;article class="bento"&gt;
+    &lt;div class="ring"&gt;&lt;/div&gt;
+    &lt;span class="tick"&gt;&lt;/span&gt;
+    &lt;h3&gt;Quant Library&lt;/h3&gt;
+    &lt;p&gt;A private expanse of curated research, articles, books, and real strategy code.&lt;/p&gt;
+  &lt;/article&gt;
+
+  &lt;article class="bento"&gt;
+    &lt;div class="ring"&gt;&lt;/div&gt;
+    &lt;span class="tick"&gt;&lt;/span&gt;
+    &lt;h3&gt;The SDK&lt;/h3&gt;
+    &lt;p&gt;Python cookbooks, powerful APIs, directly served to you.&lt;/p&gt;
+  &lt;/article&gt;
+
+  &lt;article class="bento"&gt;
+    &lt;div class="ring"&gt;&lt;/div&gt;
+    &lt;span class="tick"&gt;&lt;/span&gt;
+    &lt;h3&gt;Execution&lt;/h3&gt;
+    &lt;p&gt;Step-by-step broker integration for live strategy deployment.&lt;/p&gt;
+  &lt;/article&gt;
+
+  &lt;article class="bento feat"&gt;
+    &lt;div class="glyph" data-glyph&gt;&lt;div class="scaler"&gt;
+      &lt;svg id="b-candles" viewBox="0 0 600 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true"&gt;&lt;/svg&gt;
+    &lt;/div&gt;&lt;/div&gt;
+    &lt;div class="scrim"&gt;&lt;/div&gt;
+    &lt;div class="ring"&gt;&lt;/div&gt;
+    &lt;span class="tick"&gt;&lt;/span&gt;
+    &lt;h3&gt;Quant-Agent&lt;/h3&gt;
+    &lt;p&gt;A proprietary AI agent built on top of ohmypi. Fully trained on the Quant-Library dataset.&lt;/p&gt;
+  &lt;/article&gt;
+
+&lt;/div&gt;
+
+&lt;script&gt;
+// Candle motif for the second feature cell.
+(function(){
+  var svg = document.getElementById("b-candles");
+  if(!svg) return;
+  var n = 9, s = "";
+  for(var i=0;i&lt;n;i++){
+    var base = 300 - (i/(n-1))*180;
+    var open = base + Math.sin(i*1.7)*26;
+    var close = base - 18 + Math.cos(i*1.3)*22;
+    var up = close &lt;= open;
+    var top = Math.min(open, close), bot = Math.max(open, close);
+    var x = 40 + i*62;
+    var high = top - 16 - (i%2)*10, low = bot + 16 + ((i+1)%2)*8;
+    s += '&lt;line x1="'+x+'" y1="'+high+'" x2="'+x+'" y2="'+low+'" stroke="'+(up?'#e7cd8c':'#7a6a3e')+'" stroke-width="2"/&gt;';
+    s += '&lt;rect x="'+(x-11)+'" y="'+top+'" width="22" height="'+Math.max(6,bot-top)+'" rx="2" fill="'+(up?'rgba(231,205,140,0.85)':'rgba(122,106,62,0.6)')+'"/&gt;';
+  }
+  svg.innerHTML = s;
+})();
+
+gsap.registerPlugin(ScrollTrigger);
+var mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, function(ctx){
+  var glyphs = document.querySelectorAll("[data-glyph]");
+  if(ctx.conditions.full){
+    glyphs.forEach(function(el){
+      gsap.from(el, {scale:.8, opacity:.15, ease:"power2.out", scrollTrigger:{trigger:el, start:"top 88%", end:"top 48%", scrub:true}});
+    });
+  } else {
+    gsap.set(glyphs, {opacity:.6});
+  }
+});
+&lt;/script&gt;</code></pre>
+</section>
+
+<script>
+// Candle motif for the second feature cell.
+(function(){
+  var svg = document.getElementById("b-candles");
+  if(!svg) return;
+  var n = 9, s = "";
+  for(var i=0;i<n;i++){
+    var base = 300 - (i/(n-1))*180;
+    var open = base + Math.sin(i*1.7)*26;
+    var close = base - 18 + Math.cos(i*1.3)*22;
+    var up = close <= open;
+    var top = Math.min(open, close), bot = Math.max(open, close);
+    var x = 40 + i*62;
+    var high = top - 16 - (i%2)*10, low = bot + 16 + ((i+1)%2)*8;
+    s += '<line x1="'+x+'" y1="'+high+'" x2="'+x+'" y2="'+low+'" stroke="'+(up?'#e7cd8c':'#7a6a3e')+'" stroke-width="2"/>';
+    s += '<rect x="'+(x-11)+'" y="'+top+'" width="22" height="'+Math.max(6,bot-top)+'" rx="2" fill="'+(up?'rgba(231,205,140,0.85)':'rgba(122,106,62,0.6)')+'"/>';
+  }
+  svg.innerHTML = s;
+})();
+
+gsap.registerPlugin(ScrollTrigger);
+var mm = gsap.matchMedia();
+mm.add({
+  full:   "(prefers-reduced-motion: no-preference)",
+  reduce: "(prefers-reduced-motion: reduce)"
+}, function(ctx){
+  var glyphs = document.querySelectorAll("[data-glyph]");
+  if(ctx.conditions.full){
+    glyphs.forEach(function(el){
+      gsap.from(el, {scale:.8, opacity:.15, ease:"power2.out", scrollTrigger:{trigger:el, start:"top 88%", end:"top 48%", scrub:true}});
+    });
+  } else {
+    gsap.set(glyphs, {opacity:.6});
+  }
+});
+</script>
+</body>
+</html>
