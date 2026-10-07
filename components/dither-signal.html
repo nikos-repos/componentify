@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component Z · Dither Signal Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="dither.js"></script>
+<style>
+:root{
+  --black:#050505;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#6ece9d;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display)}
+
+/* ============ COMPONENT: DITHER SIGNAL HERO ============ */
+.hero{position:relative;min-height:100svh;overflow:hidden;padding:0 48px}
+.hero .dither{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
+/* the headline is drawn by the field; this copy of it is for readers and search, not eyes */
+.hero h1{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;font:700 100px var(--font-display)}
+.hero .copy{position:absolute;left:48px;right:48px;bottom:10vh;z-index:1;display:flex;justify-content:space-between;align-items:flex-end;gap:32px;max-width:1440px;margin:0 auto}
+.hero .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
+.hero .k b{color:var(--white);font-weight:500}
+.hero p{color:var(--grey);max-width:44ch;font-size:1.0625rem;line-height:1.6;text-align:right}
+@media(max-width:768px){.hero{padding:0 20px}.hero .copy{left:20px;right:20px;flex-direction:column;align-items:flex-start}.hero p{text-align:left}}
+
+/* ============ GUIDE ============ */
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding:32px 48px 96px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--white);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}.guide{padding:32px 20px 64px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--grey);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--grey);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--grey);white-space:pre;border-radius:.75rem!important}
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+</head>
+<body>
+
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<main>
+<section class="hero">
+  <canvas class="dither" aria-hidden="true"></canvas>
+  <h1 data-lines="Cut from|light.">Cut from light.</h1>
+  <div class="copy">
+    <span class="k"><b>COMPONENT Z</b> / DITHER SIGNAL · HERO SPLASH</span>
+    <p>The headline is not text. It is the dark left behind by the field: the glyphs are rasterised to a distance texture and the dither glows out from their edges.</p>
+  </div>
+</section>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / DITHER SIGNAL</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A WebGL2 dither field driven by <code>dither.js</code>. On every resize the stencil draws the headline onto a half-resolution 2D canvas, runs a two-pass chamfer distance transform both ways, and hands the engine a signed distance texture. The field is then the crescent falloff measured from the glyph edges, with the glyph interiors left black, so the letters are carved out of light. Sparks are seeded across the text box and only those born on an edge are drawn, rising and fading.</p>
+      <h3>When to use</h3>
+      <p>Heroes where the name is the whole message: two short lines, heavy weight. Keep the DOM headline in place for screen readers and search; the field is decoration over it, not a replacement.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Palette</dt><dd>rim #a7f3cf · mid #6ece9d · far #10402b · spark #f0fdf6 on #050505</dd>
+        <dt>Text</dt><dd>Space Grotesk 700, widest line at 74% width, 0.95 line height, 3px solid edge</dd>
+        <dt>Texture</dt><dd>R8 signed distance at half resolution, 3-4 chamfer, ±128 px range</dd>
+        <dt>A11y</dt><dd>real h1 kept for AT, aria-hidden canvas, reduced-motion = one still frame</dd>
+        <dt>Perf</dt><dd>distance transform ~10 ms per resize, then WebGL2 at the 2.2 MP budget</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Do not run more than two lines or a light weight, thin strokes fill with glow and vanish. Do not put body copy inside the text box. Change the words in the <code>data-lines</code> attribute, nowhere else.</p>
+    </div>
+  </div>
+  <pre class="usage"><code></code></pre>
+</section>
+</main>
+
+<script id="stencil">
+const headline = document.querySelector(".hero h1");
+const LINES = headline.dataset.lines.split("|");
+const raster = document.createElement("canvas");
+ditherHero(document.querySelector(".dither"), {
+    palette: { base: "#050505", rim: "#a7f3cf", mid: "#6ece9d", far: "#10402b", spark: "#f0fdf6", vignette: 1 },
+    common: `
+    /* signed distance to the glyph edges in canvas px. c0 = text box, c1.x = texture scale */
+    float signal(vec2 p) { return (texture(tex, p / viewport.xy).r * 255.0 - 32.0) * c1.x; }`,
+    field: `
+    vec4 field(vec2 p) {
+        float d = signal(p + 1.0);
+        float theta = p.x / viewport.z * 0.004;
+        if (d < 0.0) return vec4(0.0);                                 // inside a glyph: black
+        if (d < 3.0 * viewport.z) return vec4(1.0, 0.0, 0.0, theta);   // the edge
+        return vec4(bands(d, 0.4), theta);
+    }`,
+    particle: `
+    vec3 particle(uint seed) {
+        vec2 origin = vec2(mix(c0.x, c0.z, random01(seed ^ 0xa511e9b3u)), mix(c0.y, c0.w, random01(seed ^ 0x165667b1u)));
+        if (abs(signal(origin)) > 6.0 * viewport.z) return vec3(-8.0, -8.0, 0.0);   // not on an edge: parked offscreen
+        return riseFrom(seed, origin, 160.0 * viewport.z) * vec3(1.0, 1.0, 0.9);
+    }`,
+    layout(w, h, s) {
+        const q = 2, tw = Math.ceil(w / q), th = Math.ceil(h / q);
+        raster.width = tw; raster.height = th;
+        const ctx = raster.getContext("2d", { willReadFrequently: true });
+        ctx.font = "700 100px 'Space Grotesk', system-ui, sans-serif";
+        const widest = Math.max(...LINES.map((line) => ctx.measureText(line).width));
+        const size = Math.min(100 * tw * 0.74 / widest, th * 0.62 / (LINES.length * 0.95));
+        const lh = size * 0.95, top = th / 2 - lh * (LINES.length - 1) / 2;
+        ctx.font = `700 ${size}px 'Space Grotesk', system-ui, sans-serif`;
+        ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = "#fff";
+        LINES.forEach((line, i) => ctx.fillText(line, tw / 2, top + i * lh));
+        const alpha = ctx.getImageData(0, 0, tw, th).data;
+        const outside = new Float32Array(tw * th), inside = new Float32Array(tw * th);
+        for (let i = 0; i < tw * th; i++) { const on = alpha[i * 4 + 3] > 127; outside[i] = on ? 0 : 1e9; inside[i] = on ? 1e9 : 0; }
+        chamfer(outside, tw, th); chamfer(inside, tw, th);
+        const data = new Uint8Array(tw * th);
+        for (let i = 0; i < data.length; i++) data[i] = Math.max(0, Math.min(255, Math.round((outside[i] - inside[i]) / 3 + 32)));
+        const half = widest * size / 200 + 8, pad = 8;
+        return {
+            count: 12000,
+            custom: [(tw / 2 - half) * q, (top - lh / 2 - pad) * q, (tw / 2 + half) * q, (top + lh * (LINES.length - 0.5) + pad) * q, q],
+            texture: { width: tw, height: th, data },
+        };
+    },
+});
+/* two-pass 3-4 chamfer distance transform, in place, in units of a third of a texel */
+function chamfer(d, w, h) {
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        const i = y * w + x; let v = d[i];
+        if (x > 0) v = Math.min(v, d[i - 1] + 3);
+        if (y > 0) {
+            v = Math.min(v, d[i - w] + 3);
+            if (x > 0) v = Math.min(v, d[i - w - 1] + 4);
+            if (x < w - 1) v = Math.min(v, d[i - w + 1] + 4);
+        }
+        d[i] = v;
+    }
+    for (let y = h - 1; y >= 0; y--) for (let x = w - 1; x >= 0; x--) {
+        const i = y * w + x; let v = d[i];
+        if (x < w - 1) v = Math.min(v, d[i + 1] + 3);
+        if (y < h - 1) {
+            v = Math.min(v, d[i + w] + 3);
+            if (x < w - 1) v = Math.min(v, d[i + w + 1] + 4);
+            if (x > 0) v = Math.min(v, d[i + w - 1] + 4);
+        }
+        d[i] = v;
+    }
+}
+</script>
+<script>
+document.querySelector(".usage code").textContent = `<!-- Requires dither.js from this library: one engine for every dither hero -->
+<script src="dither.js"><\/script>
+
+<style>
+.hero{position:relative;min-height:100svh;overflow:hidden;padding:0 48px}
+.hero .dither{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
+.hero h1{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;font:700 100px var(--font-display)}
+</style>
+
+<section class="hero">
+  <canvas class="dither" aria-hidden="true"></canvas>
+  <h1 data-lines="Cut from|light.">Cut from light.</h1>
+</section>
+
+<script>
+` + document.getElementById("stencil").textContent.trim() + `
+<\/script>`;
+</script>
+</body>
+</html>
