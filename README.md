@@ -4,7 +4,7 @@ Niko Bono's public web components. Every piece is one self-contained HTML file: 
 
 ## Components
 
-Three sets: A–J use the site system (Space Grotesk + JetBrains Mono, cyan accent); K–U use the gold set (Instrument Serif + Inter, `#c9a24b`); V–Z are the dither heroes below, site type with one tint each. GSAP 3.13 from cdnjs where a file says so; nothing else to install.
+Three sets: A–J use the site system (Space Grotesk + JetBrains Mono, cyan accent); K–U use the gold set (Instrument Serif + Inter, `#c9a24b`); V–AA are the dither heroes below, site type with one tint each. GSAP 3.13 from cdnjs where a file says so; nothing else to install.
 
 | # | Component | Category | What it does | File |
 |---|---|---|---|---|
@@ -32,17 +32,18 @@ Three sets: A–J use the site system (Space Grotesk + JetBrains Mono, cyan acce
 
 [accent-study.html](components/accent-study.html) is the study that fixed the one-accent rule the A–J set follows.
 
-## Dither heroes (V–Z)
+## Dither heroes (V–AA)
 
-Five hero splash screens on one engine, [dither.js](components/dither.js), a WebGL2 generalisation of the repconnect crescent. The engine owns the look: 2px cells re-rolled every 90 frames, three density bands, a solid rim with a travelling glimmer, 2px sparks, grain, vignette. Each hero is a stencil: two short GLSL functions and a layout. Copy `dither.js` next to your page and paste the stencil from the hero's usage block.
+Six hero splash screens on one engine, [dither.js](components/dither.js), a WebGL2 generalisation of the repconnect crescent. The engine owns the look: 2px cells re-rolled every 90 frames, three density bands, a solid rim with a travelling glimmer, 2px sparks, grain, vignette. Each hero is a stencil: two short GLSL functions and a layout. Copy `dither.js` next to your page and paste the stencil from the hero's usage block.
 
 | # | Component | Geometry | File |
 |---|---|---|---|
 | V | Dither Tide | Three-sine sea surface; the sea glows below it, spray rises into the dark. | [dither-tide.html](components/dither-tide.html) |
 | W | Dither Halo | A thin ring, long bands out and short bands in; sparks fall toward the copy. | [dither-halo.html](components/dither-halo.html) |
 | X | Dither Beam | A cone from the top-left, solid edges, dust drifting down the shaft. | [dither-beam.html](components/dither-beam.html) |
-| Y | Dither Bloom | A pocket eclipse that eases toward the pointer and wanders a Lissajous path when idle. | [dither-bloom.html](components/dither-bloom.html) |
+| Y | Dither Bloom | A pocket eclipse with a comet tail; eases toward the pointer, wanders a Lissajous path when idle. | [dither-bloom.html](components/dither-bloom.html) |
 | Z | Dither Signal | The headline rasterised to a signed distance texture; glyphs carved out of light. | [dither-signal.html](components/dither-signal.html) |
+| AA | Dither Portal | A standing oval; three spiral arms turn about a black core inside, the glow spills out, sparks ride the arms in. | [dither-portal.html](components/dither-portal.html) |
 
 Writing a new one:
 
