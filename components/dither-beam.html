@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component X · Dither Beam Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="dither.js"></script>
+<style>
+:root{
+  --black:#050505;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#FFFFFF;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display)}
+
+/* ============ COMPONENT: DITHER BEAM HERO ============ */
+.hero{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:0 48px}
+.hero .dither{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
+.hero .copy{position:relative;z-index:1;max-width:1440px;width:100%;margin:0 auto;display:flex;flex-direction:column;align-items:flex-end;text-align:right}
+.hero .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:24px}
+.hero .k b{color:var(--white);font-weight:500}
+.hero h1{font-size:clamp(2.75rem,7vw,6rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;max-width:12ch}
+.hero h1 em{font-style:normal;color:var(--grey-dim)}
+.hero p{color:var(--grey);max-width:44ch;margin-top:32px;font-size:1.0625rem;line-height:1.6}
+@media(max-width:768px){.hero{padding:0 20px;justify-content:flex-start}.hero .copy{padding-top:22vh}}
+
+/* ============ GUIDE ============ */
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding:32px 48px 96px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--white);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}.guide{padding:32px 20px 64px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--grey);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--grey);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--grey);white-space:pre;border-radius:.75rem!important}
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+</head>
+<body>
+
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<main>
+<section class="hero">
+  <canvas class="dither" aria-hidden="true"></canvas>
+  <div class="copy">
+    <span class="k"><b>COMPONENT X</b> / DITHER BEAM · HERO SPLASH</span>
+    <h1>One shaft<br>of <em>light.</em></h1>
+    <p>A cone from the top-left corner, edged in solid cells, filled with dense dither that thins along its length. Dust drifts down the shaft at three speeds and fades where the beam does.</p>
+  </div>
+</section>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / DITHER BEAM</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A WebGL2 dither field driven by <code>dither.js</code>. The stencil projects each cell into the beam's frame, distance along the axis and signed distance to the cone edge, then applies the crescent falloff on both sides of the edge: tight outside, long inside with a floor of far-tint dust so the shaft reads as filled. Everything is multiplied by an exponential along the axis so the beam dies before the bottom edge.</p>
+      <h3>When to use</h3>
+      <p>Heroes with the copy on the right. The beam owns the left two thirds diagonally and leaves the right side black for a long headline.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Palette</dt><dd>rim #ffffff · mid #a3a3a3 · far #2a2a2a · spark #ffffff on #050505</dd>
+        <dt>Cone</dt><dd>apex (6% w, −30% h) → (62% w, 105% h), 14px at the apex, half-angle 6.3°</dd>
+        <dt>Motion</dt><dd>cells re-roll every 90f, glimmer runs down the beam, dust 0.25–0.75 px/f</dd>
+        <dt>A11y</dt><dd>aria-hidden canvas, pointer-events none, reduced-motion = one still frame</dd>
+        <dt>Perf</dt><dd>WebGL2, 2.2 MP pixel budget, pauses offscreen</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Do not widen the half-angle past 0.15, the shaft turns into a wash. Do not tint the rim; a white beam is the point. Keep the headline clear of the exit at bottom-centre.</p>
+    </div>
+  </div>
+  <pre class="usage"><code></code></pre>
+</section>
+</main>
+
+<script id="stencil">
+ditherHero(document.querySelector(".dither"), {
+    palette: { base: "#050505", rim: "#ffffff", mid: "#a3a3a3", far: "#2a2a2a", spark: "#ffffff", vignette: 1 },
+    common: `
+    /* beam frame: distance along the axis, and signed distance outside the cone edge.
+       c0 = origin.xy, direction.xy   c1 = source half-width, tan(half-angle), fade length, span */
+    vec2 beam(vec2 p) {
+        vec2 r = p - c0.xy;
+        float along = dot(r, c0.zw);
+        float across = abs(r.x * c0.w - r.y * c0.z);
+        return vec2(along, across - (c1.x + max(along, 0.0) * c1.y));
+    }`,
+    field: `
+    vec4 field(vec2 p) {
+        vec2 b = beam(p);
+        if (b.x < 0.0) return vec4(0.0);
+        float life = exp(-b.x / c1.z);                       // the shaft dies along its length
+        float theta = b.x / viewport.z * 0.006;              // the glimmer runs down the beam
+        if (abs(b.y) < 2.5 * viewport.z) return vec4(min(1.0, life * 1.6), 0.0, 0.0, theta);
+        if (b.y > 0.0) return vec4(bands(b.y, 0.35) * life, theta);
+        vec3 inside = bands(-b.y, 1.5) * life;
+        inside.y = max(inside.y, 0.45 * life);               // mid and far dust fill the shaft
+        inside.z = max(inside.z, 0.3 * life);
+        return vec4(inside, theta);
+    }`,
+    particle: `
+    vec3 particle(uint seed) {
+        float s = viewport.z, t = viewport.w, span = c1.w;
+        float speed = (0.25 + random01(seed ^ 0x9e3779b9u) * 0.5) * s;
+        float along = cycle(t * speed + random01(seed ^ 0xc2b2ae35u) * span, span);
+        float lateral = (random01(seed ^ 0xa511e9b3u) * 2.0 - 1.0) * (c1.x + along * c1.y) * 1.15;
+        float drift = sin(t * 0.01 + random01(seed ^ 0x27d4eb2fu) * TAU) * 10.0 * s;
+        vec2 pos = c0.xy + c0.zw * along + vec2(c0.w, -c0.z) * (lateral + drift);
+        return vec3(pos, fade(along, span) * (0.35 + 0.65 * exp(-along / c1.z)));
+    }`,
+    layout(w, h, s) {
+        const ax = w * 0.06, ay = -h * 0.3, dx = w * 0.62 - ax, dy = h * 1.05 - ay;   // apex well above the frame so its cut line never shows
+        const span = Math.hypot(dx, dy), width = 14 * s, tan = 0.11;
+        return { custom: [ax, ay, dx / span, dy / span, width, tan, span * 0.75, span], count: 0.0125 * span * (width + span * tan) };
+    },
+});
+</script>
+<script>
+document.querySelector(".usage code").textContent = `<!-- Requires dither.js from this library: one engine for every dither hero -->
+<script src="dither.js"><\/script>
+
+<style>
+.hero{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:0 48px}
+.hero .dither{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
+.hero .copy{position:relative;z-index:1;max-width:1440px;width:100%;margin:0 auto;display:flex;flex-direction:column;align-items:flex-end;text-align:right}
+.hero h1{font-size:clamp(2.75rem,7vw,6rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;max-width:12ch}
+</style>
+
+<section class="hero">
+  <canvas class="dither" aria-hidden="true"></canvas>
+  <div class="copy">
+    <h1>One shaft<br>of light.</h1>
+  </div>
+</section>
+
+<script>
+` + document.getElementById("stencil").textContent.trim() + `
+<\/script>`;
+</script>
+</body>
+</html>
