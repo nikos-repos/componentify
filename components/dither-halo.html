@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component W · Dither Halo Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="dither.js"></script>
+<style>
+:root{
+  --black:#050505;--white:#FFFFFF;--grey:#A3A3A3;--grey-dim:#6B6B6B;--accent:#c9a24b;
+  --line:rgba(255,255,255,.16);--line-faint:rgba(255,255,255,.07);
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{background:var(--black);color:var(--white);font-family:var(--font-display)}
+
+/* ============ COMPONENT: DITHER HALO HERO ============ */
+.hero{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 48px}
+.hero .dither{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
+.hero .copy{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;max-width:min(58vmin,640px)}
+.hero .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:24px}
+.hero .k b{color:var(--white);font-weight:500}
+.hero h1{font-size:clamp(1.75rem,6.5vmin,4.25rem);font-weight:700;line-height:1.05;letter-spacing:-.03em}
+.hero h1 em{font-style:normal;color:var(--grey-dim)}
+.hero p{color:var(--grey);max-width:34ch;margin-top:24px;font-size:clamp(.875rem,1.6vmin,1.0625rem);line-height:1.6}
+@media(max-width:768px){.hero{padding:0 20px}.hero .k{display:none}}
+
+/* ============ GUIDE ============ */
+.guide{max-width:960px;margin:96px auto 0;border-top:1px solid var(--line);padding:32px 48px 96px}
+.guide-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.guide-label::after{content:"";flex:1;height:1px;background:var(--line-faint)}
+.guide-label b{color:var(--white);font-weight:500}
+.guide-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:64px}
+@media(max-width:768px){.guide-grid{grid-template-columns:1fr;gap:48px}.guide{padding:32px 20px 64px}}
+.guide-col h3{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);font-weight:500;margin:32px 0 12px}
+.guide-col h3:first-child{margin-top:0}
+.guide-col p{color:var(--grey);font-size:.9375rem;line-height:1.65;max-width:60ch}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.spec dt{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.spec dd{font-family:var(--font-mono);font-size:12px;color:var(--grey);line-height:1.5}
+.usage{margin-top:48px;border:1px solid var(--line);padding:24px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--grey);white-space:pre;border-radius:.75rem!important}
+.back{position:fixed;top:24px;left:32px;z-index:60;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 200ms var(--ease-out)}
+.back:hover{color:var(--white)}
+.back .arr{display:inline-block;transition:transform 200ms var(--ease-out)}
+.back:hover .arr{transform:translateX(-3px)}
+@media(max-width:768px){.back{top:18px;left:20px}}
+</style>
+</head>
+<body>
+
+<a class="back" href="https://www.nikobono.com/web-design.html"><span class="arr">&larr;</span> web design</a>
+
+<main>
+<section class="hero">
+  <canvas class="dither" aria-hidden="true"></canvas>
+  <div class="copy">
+    <span class="k"><b>COMPONENT W</b> / DITHER HALO · HERO SPLASH</span>
+    <h1>Inside<br>the ring.</h1>
+    <p>A thin solid ring, glowing out in long bands and in with short ones, so the centre stays dark enough to read. Sparks fall from the ring toward the copy and die before they arrive.</p>
+  </div>
+</section>
+
+<section class="guide">
+  <div class="guide-label"><b>GUIDE</b> / DITHER HALO</div>
+  <div class="guide-grid">
+    <div class="guide-col">
+      <h3>Overview</h3>
+      <p>A WebGL2 dither field driven by <code>dither.js</code>. The stencil is a signed distance to a circle: outside the ring the engine's crescent falloff runs at full length, inside it runs at 30% length and reduced odds, which keeps the disc dark for the headline. The particles are the crescent's own, born on the ring and falling inward, through the shared <code>fallFromRing</code> helper.</p>
+      <h3>When to use</h3>
+      <p>Centred heroes with a short headline, a product name, a manifesto line. The ring frames the copy the way a spotlight would, without a gradient anywhere.</p>
+    </div>
+    <div class="guide-col">
+      <h3>Spec</h3>
+      <dl class="spec">
+        <dt>Palette</dt><dd>rim #f3dca0 · mid #c9a24b · far #3a2d10 · spark #fff7e0 on #050505</dd>
+        <dt>Ring</dt><dd>radius 34% of the short side, 3px solid, 3 glimmer waves around</dd>
+        <dt>Motion</dt><dd>cells re-roll every 90f, glimmer orbits in ~16s, sparks fall through half the radius</dd>
+        <dt>A11y</dt><dd>aria-hidden canvas, pointer-events none, reduced-motion = one still frame</dd>
+        <dt>Perf</dt><dd>WebGL2, 2.2 MP pixel budget, pauses offscreen</dd>
+      </dl>
+      <h3>Anti-patterns</h3>
+      <p>Do not let the copy cross the ring; cap its width at 58vmin. Do not raise the inner odds, the centre is dark on purpose. One ring per page.</p>
+    </div>
+  </div>
+  <pre class="usage"><code></code></pre>
+</section>
+</main>
+
+<script id="stencil">
+ditherHero(document.querySelector(".dither"), {
+    palette: { base: "#050505", rim: "#f3dca0", mid: "#c9a24b", far: "#3a2d10", spark: "#fff7e0", vignette: 1 },
+    field: `
+    vec4 field(vec2 p) {
+        vec2 delta = p - c0.xy;
+        float d = length(delta) - c0.z;
+        float theta = atan(delta.y, delta.x) * 3.0;
+        if (abs(d) < 3.0 * viewport.z) return vec4(1.0, 0.0, 0.0, theta);
+        if (d > 0.0) return vec4(bands(d, 0.65), theta);
+        return vec4(bands(-d, 0.3) * vec3(0.5, 0.4, 0.25), theta);   // inside: short and dim, the copy lives here
+    }`,
+    particle: `
+    vec3 particle(uint seed) { return fallFromRing(seed, c0.xy, c0.z, c0.w); }`,
+    layout(w, h, s) {
+        const r = Math.min(w, h) * 0.34;
+        return { custom: [w / 2, h / 2, r, r * 0.5], count: 0.00625 * Math.PI * r * r };
+    },
+});
+</script>
+<script>
+document.querySelector(".usage code").textContent = `<!-- Requires dither.js from this library: one engine for every dither hero -->
+<script src="dither.js"><\/script>
+
+<style>
+.hero{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 48px}
+.hero .dither{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
+.hero .copy{position:relative;z-index:1;text-align:center;max-width:min(58vmin,640px)}
+.hero h1{font-size:clamp(1.75rem,6.5vmin,4.25rem);font-weight:700;line-height:1.05;letter-spacing:-.03em}
+</style>
+
+<section class="hero">
+  <canvas class="dither" aria-hidden="true"></canvas>
+  <div class="copy">
+    <h1>Inside<br>the ring.</h1>
+  </div>
+</section>
+
+<script>
+` + document.getElementById("stencil").textContent.trim() + `
+<\/script>`;
+</script>
+</body>
+</html>
