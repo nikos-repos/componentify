@@ -4,7 +4,7 @@ Niko Bono's public web components. Every piece is one self-contained HTML file: 
 
 ## Components
 
-Two token sets: A–J use the site system (Space Grotesk + JetBrains Mono, cyan accent); K–U use the gold set (Instrument Serif + Inter, `#c9a24b`). GSAP 3.13 from cdnjs where a file says so; nothing else to install.
+Three sets: A–J use the site system (Space Grotesk + JetBrains Mono, cyan accent); K–U use the gold set (Instrument Serif + Inter, `#c9a24b`); V–Z are the dither heroes below, site type with one tint each. GSAP 3.13 from cdnjs where a file says so; nothing else to install.
 
 | # | Component | Category | What it does | File |
 |---|---|---|---|---|
@@ -31,6 +31,33 @@ Two token sets: A–J use the site system (Space Grotesk + JetBrains Mono, cyan 
 | U | Scroll-Scrubbed Creed | Section | A manifesto that writes itself in word by word on scroll. | [scroll-creed.html](components/scroll-creed.html) |
 
 [accent-study.html](components/accent-study.html) is the study that fixed the one-accent rule the A–J set follows.
+
+## Dither heroes (V–Z)
+
+Five hero splash screens on one engine, [dither.js](components/dither.js), a WebGL2 generalisation of the repconnect crescent. The engine owns the look: 2px cells re-rolled every 90 frames, three density bands, a solid rim with a travelling glimmer, 2px sparks, grain, vignette. Each hero is a stencil: two short GLSL functions and a layout. Copy `dither.js` next to your page and paste the stencil from the hero's usage block.
+
+| # | Component | Geometry | File |
+|---|---|---|---|
+| V | Dither Tide | Three-sine sea surface; the sea glows below it, spray rises into the dark. | [dither-tide.html](components/dither-tide.html) |
+| W | Dither Halo | A thin ring, long bands out and short bands in; sparks fall toward the copy. | [dither-halo.html](components/dither-halo.html) |
+| X | Dither Beam | A cone from the top-left, solid edges, dust drifting down the shaft. | [dither-beam.html](components/dither-beam.html) |
+| Y | Dither Bloom | A pocket eclipse that eases toward the pointer and wanders a Lissajous path when idle. | [dither-bloom.html](components/dither-bloom.html) |
+| Z | Dither Signal | The headline rasterised to a signed distance texture; glyphs carved out of light. | [dither-signal.html](components/dither-signal.html) |
+
+Writing a new one:
+
+```js
+ditherHero(canvas, {
+  palette:  { base, rim, mid, far, spark, vignette },   // hex strings, vignette 0|1
+  common:   `/* glsl shared by field and particle */`,  // optional
+  field:    `vec4 field(vec2 p) { ... }`,                // (rim, mid, far odds, theta); rim >= 1 is a solid cell
+  particle: `vec3 particle(uint seed) { ... }`,          // (x, y, alpha) in canvas px
+  layout:   (w, h, scale) => ({ count, custom, texture }),
+  frame:    (custom, df, pointer) => {},                 // optional, per frame
+});
+```
+
+`bands(d, stretch)` gives the crescent falloff for a cell `d` px outside an edge; `fallFromRing` and `riseFrom` are the two particle behaviours the heroes share.
 
 ## Running locally
 
