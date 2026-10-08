@@ -41,7 +41,7 @@ Six hero splash screens on one engine, [dither.js](components/dither.js), a WebG
 | V | Dither Tide | Three-sine sea surface; the sea glows below it, spray rises into the dark. | [dither-tide.html](components/dither-tide.html) |
 | W | Dither Halo | A thin ring, long bands out and short bands in; sparks fall toward the copy. | [dither-halo.html](components/dither-halo.html) |
 | X | Dither Beam | A cone from the top-left, solid edges, dust drifting down the shaft. | [dither-beam.html](components/dither-beam.html) |
-| Y | Dither Bloom | A pocket eclipse with a comet tail; eases toward the pointer, wanders a Lissajous path when idle. | [dither-bloom.html](components/dither-bloom.html) |
+| Y | Dither Bloom | A pocket eclipse that stretches into a comet as it moves; eases toward the pointer, wanders a Lissajous path when idle. | [dither-bloom.html](components/dither-bloom.html) |
 | Z | Dither Signal | The headline rasterised to a signed distance texture; glyphs carved out of light. | [dither-signal.html](components/dither-signal.html) |
 | AA | Dither Portal | A standing oval; three spiral arms turn about a black core inside, the glow spills out, sparks ride the arms in. | [dither-portal.html](components/dither-portal.html) |
 
