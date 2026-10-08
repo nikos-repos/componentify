@@ -62,7 +62,7 @@ body{background:var(--black);color:var(--white);font-family:var(--font-display)}
   <div class="copy">
     <span class="k"><b>COMPONENT Y</b> / DITHER BLOOM · HERO SPLASH · MOVE THE CURSOR</span>
     <h1>It follows<br>the <em>cursor.</em></h1>
-    <p>A pocket eclipse with a comet tail: a dark disc with a solid rim and a dithered corona that trails the pointer and breathes. Move and the tail streams out behind it, sparks riding it back; stop and it draws in. Left alone it wanders on a slow Lissajous path.</p>
+    <p>A pocket eclipse that turns into a comet: a dark disc with a solid rim and a dithered corona that trails the pointer and breathes. Move and the disc stretches along its heading, rim and core dissolving into a dust tail with sparks streaming down it; stop and it rounds back up. Left alone it wanders on a slow Lissajous path.</p>
   </div>
 </section>
 
@@ -71,7 +71,7 @@ body{background:var(--black);color:var(--white);font-family:var(--font-display)}
   <div class="guide-grid">
     <div class="guide-col">
       <h3>Overview</h3>
-      <p>A WebGL2 dither field driven by <code>dither.js</code>. The stencil is the crescent at pocket size: a disc whose centre lives in a custom uniform, moved each frame by the stencil's <code>frame</code> hook, which eases toward the pointer while it is over the hero and toward a Lissajous curve when it is not. The same hook keeps a smoothed velocity; its direction and magnitude become a teardrop behind the disc, 80px of tail per pixel-per-frame of speed, filled with dithered odds that thin along its length. Half the sparks fall into the disc, half stream down the tail.</p>
+      <p>A WebGL2 dither field driven by <code>dither.js</code>. The stencil is the crescent at pocket size: a disc whose centre lives in a custom uniform, moved each frame by the stencil's <code>frame</code> hook, which eases toward the pointer while it is over the hero and toward a Lissajous curve when it is not. The same hook keeps a smoothed velocity; its heading and magnitude become one domain warp that stretches the resting circle behind the disc, fully on the axis and not at all at the sides. Everything rides that warp: the black core, the solid rim (both dissolve to dust toward the tip), the corona (its stretched falloff is the tail) and the sparks falling in. The other half of the sparks are born at the tip and stream back down the tail.</p>
       <h3>When to use</h3>
       <p>Heroes that want one interactive moment without a mouse-trail or a cursor replacement. Touch devices never see the pointer, so the idle path is the real design, tune it first.</p>
     </div>
@@ -81,12 +81,12 @@ body{background:var(--black);color:var(--white);font-family:var(--font-display)}
         <dt>Palette</dt><dd>rim #fbcfe8 · mid #ec4899 · far #4a1030 · spark #fff1f7 on #050505</dd>
         <dt>Disc</dt><dd>radius 12% of the short side, breathes ±6%, 4px solid rim, corona at 55% length</dd>
         <dt>Motion</dt><dd>eases 5%/frame toward the target, idle Lissajous 0.0071/0.0093 rad/f</dd>
-        <dt>Tail</dt><dd>opposite the velocity (10%/frame smoothed), 80px per px/f, capped at 900px, taper (1−u)^0.6</dd>
+        <dt>Tail</dt><dd>the disc stretches against its velocity (10%/frame smoothed), 14px per px/f, capped at 2.2 radii; rim and core dissolve to dust along the stretch</dd>
         <dt>A11y</dt><dd>aria-hidden canvas, copy ignores the pointer, reduced-motion = one still frame</dd>
         <dt>Perf</dt><dd>WebGL2, 2.2 MP pixel budget, pauses offscreen</dd>
       </dl>
       <h3>Anti-patterns</h3>
-      <p>Do not snap to the pointer; the ease is what makes it feel heavy and gives the tail its length. Do not grow the disc past 15% of the short side, it starts covering the copy. Keep the copy pointer-events: none so the hero gets every move.</p>
+      <p>Do not snap to the pointer; the ease is what makes it feel heavy and gives the stretch its length. Do not grow the disc past 15% of the short side, it starts covering the copy. Keep the copy pointer-events: none so the hero gets every move.</p>
     </div>
   </div>
   <pre class="usage"><code></code></pre>
@@ -94,52 +94,56 @@ body{background:var(--black);color:var(--white);font-family:var(--font-display)}
 </main>
 
 <script id="stencil">
-const bloom = { size: [0, 0], scale: 1, at: [0, 0], v: [0, 0], t: 0 };   // canvas size, disc centre, smoothed velocity, idle clock
+const bloom = { size: [0, 0], scale: 1, r: 1, at: [0, 0], v: [0, 0], dir: [1, 0], t: 0 };   // canvas size, disc radius, centre, smoothed velocity, last heading, idle clock
 ditherHero(document.querySelector(".dither"), {
     palette: { base: "#050505", rim: "#fbcfe8", mid: "#ec4899", far: "#4a1030", spark: "#fff1f7", vignette: 1 },
     common: `
-    /* c0 = centre.xy, radius, spark band   c1 = unit direction of travel.xy, tail length px */
+    /* c0 = centre.xy, radius, spark band   c1 = unit heading.xy (kept when it stops), stretch k: the tip sits r(1+k) behind the centre, 0 at rest */
     float discRadius() { return c0.z * (1.0 + 0.06 * sin(viewport.w * 0.02)); }
-    /* tail frame: px behind the disc along the tail, and px off its axis */
-    vec2 tail(vec2 delta) { return vec2(dot(delta, -c1.xy), abs(delta.x * c1.y - delta.y * c1.x)); }`,
+    /* the drop is the resting circle stretched along its heading: fully on the axis, not at all at the sides */
+    float stretchAt(float across, float r) { return 1.0 + c1.z * max(0.0, 1.0 - across * across / (r * r)); }
+    vec2 behind(vec2 delta) { return vec2(dot(delta, -c1.xy), delta.x * c1.y - delta.y * c1.x); }   // px behind the centre, px off the axis`,
     field: `
     vec4 field(vec2 p) {
         vec2 delta = p - c0.xy;
-        float r = discRadius();
-        float d = length(delta) - r;
-        float theta = atan(delta.y, delta.x) * 2.0;
-        if (d < 0.0) return vec4(0.0);
-        if (d < 4.0 * viewport.z) return vec4(1.0, 0.0, 0.0, theta);
+        float r = discRadius(), s = viewport.z, k = c1.z;
+        vec2 b = behind(delta);
+        float st = b.x > 0.0 ? stretchAt(b.y, r) : 1.0;
+        vec2 q = delta + c1.xy * b.x * (1.0 - 1.0 / st);        // where this cell sat on the resting circle
+        float d = length(q) - r;                                 // resting distance: the corona rides the stretch and becomes the tail
+        float theta = atan(q.y, q.x) * 2.0;
+        float v = clamp((b.x - r) / max(r * k, 1.0), 0.0, 1.0) * min(1.0, k);   // 0 at the disc's back edge, 1 at the tip; the whole effect scales with the stretch so a slow drift only softens the back rim
+        float rimW = 1.0 - 0.85 * smoothstep(0.1, 0.9, v);                              // the outline dissolves down the tail
+        vec3 dust = vec3(0.05, 0.45, 0.6) * smoothstep(0.35, 1.0, v) * exp(-max(d, 0.0) / (60.0 * s));   // the core thins to dust at the tip and streams out of it
+        if (d < 0.0) return vec4(dust, theta);
+        if (d * st < 4.0 * s) return vec4(max(vec3(rimW, (1.0 - rimW) * 0.7, 0.0), dust), theta);
         vec3 odds = bands(d, 0.55);
-        // the comet tail: a teardrop behind the disc, opposite its motion, gone when it rests
-        vec2 b = tail(delta);
-        float u = b.x / max(c1.z, 1.0);
-        if (c1.z > 0.0 && u > 0.0 && u < 1.0) {
-            float edge = b.y - r * pow(1.0 - u, 0.6);                        // px outside the teardrop
-            float life = pow(1.0 - u, 1.5);
-            odds = max(odds, (edge < 0.0 ? vec3(0.12, 0.5, 0.8) : bands(edge, 0.4) * vec3(0.0, 1.0, 1.0)) * life);   // no rim odds outside: the tail has no hard edge
-        }
-        return vec4(odds, theta);
+        odds.x *= rimW;
+        return vec4(max(odds, dust), theta);
     }`,
     particle: `
     vec3 particle(uint seed) {
-        if ((seed & 1u) == 0u) return fallFromRing(seed, c0.xy, discRadius(), c0.w);
-        // comet sparks: stream back down the tail, faster than the fall-in, stretching with it
-        if (c1.z <= 0.0) return vec3(-8.0, -8.0, 0.0);
-        float s = viewport.z, t = viewport.w, r = discRadius();
-        float speed = (0.5 + random01(seed ^ 0x9e3779b9u)) * s;
-        float u = cycle(t * speed / (900.0 * s) + random01(seed ^ 0xc2b2ae35u), 1.0);
-        float reach = c1.z * max(0.1, 1.0 - pow(random01(seed ^ 0x63d83595u), 1.0 / 3.0));
-        float lateral = (random01(seed ^ 0xa511e9b3u) * 2.0 - 1.0) * r * pow(1.0 - u, 0.6);
-        vec2 pos = c0.xy - c1.xy * (r * 0.8 + u * reach) + vec2(c1.y, -c1.x) * lateral;
-        return vec3(pos, min(1.0, u * 20.0) * (1.0 - u));
+        float r = discRadius(), s = viewport.z, t = viewport.w, k = c1.z;
+        if ((seed & 1u) == 0u) {   // the fall-in, stretched into the drop along with the field
+            vec3 spark = fallFromRing(seed, c0.xy, r, c0.w);
+            vec2 b = behind(spark.xy - c0.xy);
+            if (b.x > 0.0) spark.xy -= c1.xy * b.x * (stretchAt(b.y, r) - 1.0);
+            return spark;
+        }
+        // comet sparks: born along the dissolving back of the drop, streaming down the tail and fanning out as they fade; gone at rest
+        float speed = (0.6 + random01(seed ^ 0x9e3779b9u) * 0.8) * (0.5 + k) * s;
+        float u = cycle(t * speed / (600.0 * s) + random01(seed ^ 0xc2b2ae35u), 1.0);
+        float reach = r * (1.0 + 2.0 * (1.0 + k) * (1.0 - pow(random01(seed ^ 0x63d83595u), 1.0 / 3.0)));
+        float lateral = (random01(seed ^ 0xa511e9b3u) * 2.0 - 1.0) * r * 0.35 * (0.6 + u);
+        vec2 pos = c0.xy - c1.xy * (r * (1.0 + k) * (0.6 + 0.4 * random01(seed ^ 0x27d4eb2fu)) + u * reach) + vec2(c1.y, -c1.x) * lateral;
+        return vec3(pos, min(1.0, u * 4.0) * (1.0 - u) * min(1.0, k) * 0.55);
     }`,
     layout(w, h, s) {
         bloom.size = [w, h];
         bloom.scale = s;
+        bloom.r = Math.min(w, h) * 0.12;
         if (!bloom.at[0]) bloom.at = [w / 2, h / 2];
-        const r = Math.min(w, h) * 0.12;
-        return { custom: [bloom.at[0], bloom.at[1], r, r * 0.8], count: 0.0125 * Math.PI * r * r * 3.2 };
+        return { custom: [bloom.at[0], bloom.at[1], bloom.r, bloom.r * 0.8], count: 0.0125 * Math.PI * bloom.r * bloom.r * 3.2 };
     },
     frame(custom, df, pointer) {
         bloom.t += df;
@@ -149,13 +153,14 @@ ditherHero(document.querySelector(".dither"), {
         const k = 1 - Math.pow(0.95, df), kv = 1 - Math.pow(0.9, df);
         bloom.at[0] += (to[0] - bloom.at[0]) * k;
         bloom.at[1] += (to[1] - bloom.at[1]) * k;
-        if (df > 0) {   // smoothed velocity in px per frame; the tail points the other way
+        if (df > 0) {   // smoothed velocity in px per frame; the drop stretches the other way
             bloom.v[0] += ((bloom.at[0] - was[0]) / df - bloom.v[0]) * kv;
             bloom.v[1] += ((bloom.at[1] - was[1]) / df - bloom.v[1]) * kv;
         }
         const speed = Math.hypot(bloom.v[0], bloom.v[1]);
+        if (speed > 0.05) bloom.dir = [bloom.v[0] / speed, bloom.v[1] / speed];   // keep the last heading at rest so the tail draws in instead of snapping
         custom.set(bloom.at);
-        custom.set(speed > 0.05 ? [bloom.v[0] / speed, bloom.v[1] / speed, Math.min(900 * bloom.scale, speed * 80)] : [0, 0, 0], 4);
+        custom.set([bloom.dir[0], bloom.dir[1], Math.min(2.2, speed * 14 * bloom.scale / bloom.r)], 4);
     },
 });
 </script>
